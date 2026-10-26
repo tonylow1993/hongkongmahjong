@@ -208,6 +208,7 @@
 
 .exposed--seat-1 .exposed__flowers,
 .exposed--seat-3 .exposed__flowers {
+  flex-direction: column;
   order: -1;
 }
 
@@ -224,7 +225,7 @@
 
 .exposed--seat-1 .meld,
 .exposed--seat-3 .meld {
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
 }
 
