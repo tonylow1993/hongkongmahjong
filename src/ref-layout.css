@@ -185,48 +185,83 @@
   max-width: none;
 }
 
-/* 下家（右）貼右上角，留在桌內 */
-.exposed--seat-1 {
-  top: 4px;
-  right: 4px;
+/* 上下家：每坎對著該玩家；畫面上直排，多坎向枱心排，花牌在最上 */
+.exposed--seat-1 .exposed__slot,
+.exposed--seat-3 .exposed__slot {
+  width: 44px;
+  height: 32px;
+}
+
+.exposed--seat-3 .mj-tile--meld {
+  transform: rotate(90deg);
+  transform-origin: center center;
+}
+
+.exposed--seat-1 .mj-tile--meld {
+  transform: rotate(-90deg);
+  transform-origin: center center;
+}
+
+.exposed--seat-1 .meld,
+.exposed--seat-3 .meld {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.exposed--seat-1 .exposed__melds,
+.exposed--seat-3 .exposed__melds {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.exposed--seat-1 .exposed__flowers,
+.exposed--seat-3 .exposed__flowers {
+  order: -1;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.exposed--seat-1 .exposed__spin,
+.exposed--seat-3 .exposed__spin {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 上家（座號3，左） */
+.exposed--seat-3 {
+  left: 4px;
+  bottom: 20px;
+  top: auto;
   width: auto;
   height: auto;
   max-width: none;
   z-index: 6;
 }
 
-/* 上下家：每坎橫排朝玩家；新坎往上疊；花牌固定最上 */
-.exposed--seat-1 .exposed__spin,
-.exposed--seat-3 .exposed__spin {
-  flex-direction: column;
-  align-items: flex-end;
-}
-
 .exposed--seat-3 .exposed__spin {
   align-items: flex-start;
 }
 
-.exposed--seat-1 .exposed__flowers,
-.exposed--seat-3 .exposed__flowers {
-  flex-direction: column;
-  order: -1;
+/* 下家（座號1，右） */
+.exposed--seat-1 {
+  right: 4px;
+  top: 10px;
+  bottom: auto;
+  width: auto;
+  height: auto;
+  max-width: none;
+  z-index: 6;
 }
 
-.exposed--seat-1 .exposed__melds,
-.exposed--seat-3 .exposed__melds {
-  flex-direction: column-reverse;
+.exposed--seat-1 .exposed__spin {
   align-items: flex-end;
-  gap: 2px;
-}
-
-.exposed--seat-3 .exposed__melds {
-  align-items: flex-start;
-}
-
-.exposed--seat-1 .meld,
-.exposed--seat-3 .meld {
-  flex-direction: column;
-  flex-wrap: nowrap;
 }
 
 /* 對家貼左上角 */
@@ -234,16 +269,6 @@
   left: 4px;
   top: 4px;
   justify-content: flex-start;
-}
-
-/* 上家（左） */
-.exposed--seat-3 {
-  left: 4px;
-  bottom: 15px;
-  width: auto;
-  height: auto;
-  max-width: none;
-  z-index: 6;
 }
 
 .mj-table__bottom {
@@ -712,6 +737,12 @@
   .exposed .mj-tile--meld {
     --tile-w: 28px;
     --tile-h: 38px;
+  }
+
+  .exposed--seat-1 .mj-tile--meld,
+  .exposed--seat-3 .mj-tile--meld {
+    --tile-w: 32px;
+    --tile-h: 44px;
   }
 
   .exposed__slot--turn {
