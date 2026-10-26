@@ -23,19 +23,46 @@ const RED = '#c4161c';
 const BLUE = '#243a8c';
 const GREEN = '#0e7a3a';
 
-/** 銅錢圓：外圈實色、中間白孔 */
-function PinDot({ x, y, c, r = 6 }: { x: number; y: number; c: string; r?: number }) {
+/** 銅錢圓：外圈實色、中間白孔；可選輪輻／菊花細節 */
+function PinDot({
+  x,
+  y,
+  c,
+  r = 6,
+  ornate,
+}: {
+  x: number;
+  y: number;
+  c: string;
+  r?: number;
+  ornate?: boolean;
+}) {
   return (
     <g>
       <circle cx={x} cy={y} r={r} fill={c} />
       <circle cx={x} cy={y} r={r * 0.42} fill="#f7f3ea" />
+      {ornate &&
+        [0, 45, 90, 135].map((deg) => (
+          <line
+            key={deg}
+            x1={x}
+            y1={y}
+            x2={x + r * 0.36 * Math.cos((deg * Math.PI) / 180)}
+            y2={y + r * 0.36 * Math.sin((deg * Math.PI) / 180)}
+            stroke={c}
+            strokeWidth="0.6"
+            opacity="0.55"
+          />
+        ))}
       <circle cx={x} cy={y} r={r * 0.18} fill={c} />
     </g>
   );
 }
 
 function PinFace({ value }: { value: number }) {
-  const d = (x: number, y: number, c: string) => <PinDot key={`${x}-${y}-${c}`} x={x} y={y} c={c} />;
+  const d = (x: number, y: number, c: string, ornate = false) => (
+    <PinDot key={`${x}-${y}-${c}`} x={x} y={y} c={c} ornate={ornate} />
+  );
 
   // 一筒：大餅，同心圓（藍／綠／紅）
   if (value === 1) {
@@ -104,17 +131,17 @@ function PinFace({ value }: { value: number }) {
     );
   }
 
-  // 七筒：左上至右下三粒綠 + 右側四粒紅方陣
+  // 七筒：上三斜全藍 + 下四方 2×2 全紅
   if (value === 7) {
     return (
       <g>
-        {d(14, 16, GREEN)}
-        {d(26, 38, GREEN)}
-        {d(38, 62, GREEN)}
-        {d(40, 16, RED)}
-        {d(52, 16, RED)}
-        {d(40, 30, RED)}
-        {d(52, 30, RED)}
+        {d(16, 16, BLUE, true)}
+        {d(30, 30, BLUE, true)}
+        {d(44, 44, BLUE, true)}
+        {d(22, 56, RED, true)}
+        {d(38, 56, RED, true)}
+        {d(22, 70, RED, true)}
+        {d(38, 70, RED, true)}
       </g>
     );
   }
@@ -186,18 +213,14 @@ function Bamboo({
   );
 }
 
-/** 斜竹（八索中間交叉） */
-function Slash({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) {
+/** 斜竹段：兩端紅結 */
+function DiagonalBamboo({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) {
   return (
-    <line
-      x1={x1}
-      y1={y1}
-      x2={x2}
-      y2={y2}
-      stroke={GREEN}
-      strokeWidth="5"
-      strokeLinecap="round"
-    />
+    <g>
+      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={GREEN} strokeWidth="4.8" strokeLinecap="round" />
+      <circle cx={x1} cy={y1} r="2.2" fill={RED} />
+      <circle cx={x2} cy={y2} r="2.2" fill={RED} />
+    </g>
   );
 }
 
@@ -222,9 +245,18 @@ function SouFace({ value }: { value: number }) {
     );
   }
 
-  if (value === 2) return <g>{sticks([{ x: 24, y: 14, h: 54 }, { x: 36, y: 14, h: 54 }])}</g>;
+  // 二索：同一中軸，上下各一根
+  if (value === 2) {
+    return <g>{sticks([{ x: 30, y: 10, h: 26 }, { x: 30, y: 48, h: 26 }])}</g>;
+  }
+  // 三索：品字形
   if (value === 3) {
-    return <g>{sticks([{ x: 16, y: 14, h: 54 }, { x: 30, y: 14, h: 54 }, { x: 44, y: 14, h: 54 }])}</g>;
+    return (
+      <g>
+        {sticks([{ x: 30, y: 10, h: 24 }])}
+        {sticks([{ x: 22, y: 44, h: 24 }, { x: 38, y: 44, h: 24 }])}
+      </g>
+    );
   }
   if (value === 4) {
     return (
@@ -251,52 +283,39 @@ function SouFace({ value }: { value: number }) {
       </g>
     );
   }
+  // 六索／七索下半：上三、下三
+  const souSixGrid = [
+    { x: 16, y: 30, h: 20 },
+    { x: 30, y: 30, h: 20 },
+    { x: 44, y: 30, h: 20 },
+    { x: 16, y: 54, h: 20 },
+    { x: 30, y: 54, h: 20 },
+    { x: 44, y: 54, h: 20 },
+  ];
   if (value === 6) {
-    return (
-      <g>
-        {sticks([
-          { x: 18, y: 8, h: 18 },
-          { x: 42, y: 8, h: 18 },
-          { x: 18, y: 32, h: 18 },
-          { x: 42, y: 32, h: 18 },
-          { x: 18, y: 56, h: 18 },
-          { x: 42, y: 56, h: 18 },
-        ])}
-      </g>
-    );
+    return <g>{sticks(souSixGrid)}</g>;
   }
-  // 七索：上排中間紅，中一綠，下排三綠
+  // 七索：塔狀 — 頂部中央一根紅竹 + 下方同六索 3×2
   if (value === 7) {
     return (
       <g>
-        {sticks([
-          { x: 16, y: 6, h: 16 },
-          { x: 30, y: 6, h: 16, color: RED },
-          { x: 44, y: 6, h: 16 },
-          { x: 30, y: 30, h: 16 },
-          { x: 16, y: 54, h: 16 },
-          { x: 30, y: 54, h: 16 },
-          { x: 44, y: 54, h: 16 },
-        ])}
+        {sticks([{ x: 30, y: 6, h: 20, color: RED }])}
+        {sticks(souSixGrid)}
       </g>
     );
   }
-  // 八索：上三、中間交叉成 M／W、下三
+  // 八索：全斜竹 — 上排 M（/\ /\\），下排 W（\/ \\/）
   if (value === 8) {
     return (
       <g>
-        {sticks([
-          { x: 16, y: 6, h: 16 },
-          { x: 30, y: 6, h: 16 },
-          { x: 44, y: 6, h: 16 },
-        ])}
-        <Slash x1={18} y1={28} x2={42} y2={50} />
-        <Slash x1={42} y1={28} x2={18} y2={50} />
-        {sticks([
-          { x: 16, y: 56, h: 16 },
-          { x: 30, y: 56, h: 16 },
-          { x: 44, y: 56, h: 16 },
-        ])}
+        <DiagonalBamboo x1={14} y1={36} x2={20} y2={14} />
+        <DiagonalBamboo x1={20} y1={14} x2={26} y2={36} />
+        <DiagonalBamboo x1={34} y1={36} x2={40} y2={14} />
+        <DiagonalBamboo x1={40} y1={14} x2={46} y2={36} />
+        <DiagonalBamboo x1={14} y1={48} x2={20} y2={70} />
+        <DiagonalBamboo x1={20} y1={70} x2={26} y2={48} />
+        <DiagonalBamboo x1={34} y1={48} x2={40} y2={70} />
+        <DiagonalBamboo x1={40} y1={70} x2={46} y2={48} />
       </g>
     );
   }
@@ -331,12 +350,15 @@ function ManFace({ value }: { value: number }) {
       </text>
       <text
         x="30"
-        y="68"
+        y="70"
         textAnchor="middle"
-        fontSize="18"
+        fontSize="24"
         fontFamily="serif"
-        fontWeight="500"
+        fontWeight="900"
         fill="#c4161c"
+        stroke="#a01010"
+        strokeWidth="0.8"
+        paintOrder="stroke fill"
       >
         萬
       </text>
