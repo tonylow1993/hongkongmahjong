@@ -101,28 +101,44 @@
 .exposed {
   position: absolute;
   z-index: 4;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  align-content: flex-end;
-  gap: 3px;
-  max-width: min(38vw, 180px);
   pointer-events: none;
 }
 
 .exposed .meld {
   display: flex;
   flex-direction: row;
-  gap: 1px;
+  gap: 0;
+  flex-shrink: 0;
 }
 
 .exposed__spin {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   align-items: flex-end;
-  gap: 3px;
+  gap: 2px;
+}
+
+.exposed__melds {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.exposed__flowers {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+/* 副露牌略小於手牌 */
+.exposed .mj-tile--meld {
+  --tile-w: 32px;
+  --tile-h: 44px;
+  padding: 2px;
 }
 
 .exposed__slot {
@@ -133,30 +149,36 @@
 
 /* 旋轉後的外框等於牌的實際佔位，避免畫出桌外 */
 .exposed__slot--turn {
-  width: 54px;
-  height: 40px;
+  width: 46px;
+  height: 34px;
 }
 
 .exposed--seat-0 {
   right: 6px;
-  bottom: 56px;
+  bottom: 4px;
   justify-content: flex-end;
   max-width: none;
 }
 
-/* 自己／對家：副露疊高，避免橫向蓋手牌 */
+/* 自己：副露疊高，花牌在最上層 */
 .exposed--seat-0 .exposed__spin {
   flex-direction: column-reverse;
-  flex-wrap: nowrap;
   align-items: flex-end;
   max-width: none;
 }
 
+.exposed--seat-0 .exposed__melds {
+  align-items: flex-end;
+}
+
+/* 對家 */
 .exposed--seat-2 .exposed__spin {
-  flex-direction: column;
-  flex-wrap: nowrap;
   align-items: flex-start;
   max-width: none;
+}
+
+.exposed--seat-2 .exposed__melds {
+  align-items: flex-start;
 }
 
 .exposed--seat-2 {
@@ -173,17 +195,37 @@
   z-index: 6;
 }
 
+/* 上下家：每坎橫排朝玩家；新坎往上疊；花牌固定最上 */
 .exposed--seat-1 .exposed__spin,
 .exposed--seat-3 .exposed__spin {
   flex-direction: column;
-  flex-wrap: nowrap;
-  width: max-content;
-  transform: none;
+  align-items: flex-end;
+}
+
+.exposed--seat-3 .exposed__spin {
+  align-items: flex-start;
+}
+
+.exposed--seat-1 .exposed__flowers,
+.exposed--seat-3 .exposed__flowers {
+  order: -1;
+}
+
+.exposed--seat-1 .exposed__melds,
+.exposed--seat-3 .exposed__melds {
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.exposed--seat-3 .exposed__melds {
+  align-items: flex-start;
 }
 
 .exposed--seat-1 .meld,
 .exposed--seat-3 .meld {
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 /* 對家貼左上角 */
@@ -193,10 +235,10 @@
   justify-content: flex-start;
 }
 
-/* 上家（左）離底邊留空 */
+/* 上家（左） */
 .exposed--seat-3 {
   left: 4px;
-  bottom: 56px;
+  bottom: 15px;
   width: auto;
   height: auto;
   max-width: none;
@@ -666,8 +708,13 @@
     --tile-h: 46px;
   }
 
+  .exposed .mj-tile--meld {
+    --tile-w: 28px;
+    --tile-h: 38px;
+  }
+
   .exposed__slot--turn {
-    width: 46px;
-    height: 34px;
+    width: 40px;
+    height: 30px;
   }
 }

@@ -28,23 +28,36 @@ export function ExposedCorner({ player, seat }: Props) {
     </span>
   );
 
+  const meldBlocks = player.melds.map((m, i) => (
+    <div key={i} className="meld">
+      {m.tiles
+        .slice(0, m.kind === 'concealedKong' ? 4 : m.tiles.length)
+        .map((t, j) =>
+          tile(
+            t.id + j,
+            t,
+            m.kind === 'concealedKong' && j < 3,
+          ),
+        )}
+    </div>
+  ));
+
+  const flowersRow =
+    player.flowers.length > 0 ? (
+      <div className="exposed__flowers">
+        {player.flowers.map((t) => tile(t.id, t))}
+      </div>
+    ) : null;
+
+  // 自己用 column-reverse：DOM 先 melds 後花，花在最上層
+  const stackTopFirst = seat === 1 || seat === 2 || seat === 3;
+
   return (
     <aside className={`exposed exposed--seat-${seat}`}>
       <div className="exposed__spin">
-        {player.flowers.map((t) => tile(t.id, t))}
-        {player.melds.map((m, i) => (
-          <div key={i} className="meld">
-            {m.tiles
-              .slice(0, m.kind === 'concealedKong' ? 4 : m.tiles.length)
-              .map((t, j) =>
-                tile(
-                  t.id + j,
-                  t,
-                  m.kind === 'concealedKong' && j < 3,
-                ),
-              )}
-          </div>
-        ))}
+        {stackTopFirst && flowersRow}
+        <div className="exposed__melds">{meldBlocks}</div>
+        {!stackTopFirst && flowersRow}
       </div>
     </aside>
   );
