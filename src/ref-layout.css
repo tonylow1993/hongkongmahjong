@@ -1,0 +1,611 @@
+/* 參考手遊平面牌桌佈局 */
+.app--ref {
+  background: #1a5c3e;
+  color: #f5f5f5;
+}
+
+.game-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.75rem;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 0.82rem;
+  z-index: 2;
+}
+
+.game-hud--top {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.game-hud--bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.game-hud__meta {
+  opacity: 0.9;
+}
+
+.game-hud__hint {
+  opacity: 0.55;
+  font-size: 0.75rem;
+}
+
+.game-hud__actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.app--ref .table-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.35rem;
+  min-height: 0;
+  position: relative;
+}
+
+.app--ref .mj-table {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 2px;
+  padding: 4px 6px 6px;
+  background: linear-gradient(165deg, #2f7d55 0%, #1e5c3d 45%, #174a32 100%);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mj-table__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mj-table__mid {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 6px;
+  min-height: 0;
+  align-items: stretch;
+  flex: 1;
+}
+
+.mj-table__wing {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  justify-content: center;
+  position: relative;
+}
+
+/* 資料框在牌的枱心側（牌前面） */
+.mj-table__wing--left {
+  flex-direction: row-reverse;
+  flex-shrink: 0;
+  width: auto;
+}
+
+.mj-table__wing--right {
+  flex-direction: row;
+  flex-shrink: 0;
+  width: auto;
+}
+
+/* 副露：牌桌四角（對圖 — 各玩家右手邊） */
+.exposed {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  align-content: flex-end;
+  gap: 3px;
+  max-width: min(38vw, 180px);
+  pointer-events: none;
+}
+
+.exposed .meld {
+  display: flex;
+  flex-direction: row;
+  gap: 1px;
+}
+
+.exposed__spin {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.exposed__slot {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+/* 旋轉後的外框等於牌的實際佔位，避免畫出桌外 */
+.exposed__slot--turn {
+  width: 44px;
+  height: 34px;
+}
+
+.exposed--seat-0 {
+  right: 6px;
+  bottom: 56px;
+  justify-content: flex-end;
+}
+
+/* 下家（右）貼右上角，留在桌內 */
+.exposed--seat-1 {
+  top: 4px;
+  right: 4px;
+  width: auto;
+  height: auto;
+  max-width: none;
+  z-index: 6;
+}
+
+.exposed--seat-1 .exposed__spin,
+.exposed--seat-3 .exposed__spin {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: max-content;
+  transform: none;
+}
+
+.exposed--seat-1 .meld,
+.exposed--seat-3 .meld {
+  flex-direction: column;
+}
+
+/* 對家貼左上角 */
+.exposed--seat-2 {
+  left: 4px;
+  top: 4px;
+  justify-content: flex-start;
+}
+
+/* 上家（左）離底邊留空 */
+.exposed--seat-3 {
+  left: 4px;
+  bottom: 56px;
+  width: auto;
+  height: auto;
+  max-width: none;
+  z-index: 6;
+}
+
+.mj-table__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 2px;
+  min-width: 0;
+}
+
+/* —— Player HUD —— */
+.phud {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.28);
+  font-size: 0.72rem;
+  position: relative;
+}
+
+.phud--turn {
+  box-shadow: 0 0 0 1px rgba(255, 220, 80, 0.65);
+}
+
+.phud__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #6a8cff, #3d5fc4);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.phud--top .phud__avatar,
+.phud--bottom .phud__avatar {
+  background: linear-gradient(145deg, #ff9a6a, #d45a2a);
+}
+
+.phud__info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.phud__name {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.phud__name em {
+  font-style: normal;
+  margin-left: 3px;
+  color: #ffd56a;
+  font-size: 0.65rem;
+}
+
+.phud__meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.9;
+}
+
+.phud__score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: #ffe08a;
+}
+
+.phud__coin {
+  font-size: 0.65rem;
+}
+
+.phud__arrow {
+  color: #ffeb3b;
+  font-size: 0.65rem;
+  margin-left: 2px;
+  animation: blink-turn 1s ease infinite;
+}
+
+.phud--left,
+.phud--right {
+  flex-direction: column;
+  text-align: center;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+@keyframes blink-turn {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* —— Arena + console —— */
+.arena {
+  position: relative;
+  width: min(100%, 580px);
+  height: min(48vh, 380px);
+  margin: 0 auto;
+  min-width: 220px;
+  flex: 1;
+  align-self: center;
+}
+
+.console {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 38%;
+  height: 38%;
+  min-width: 88px;
+  min-height: 88px;
+  background: linear-gradient(180deg, #4a5056 0%, #2f3438 100%);
+  border: 2px solid #1a1d20;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.console__core {
+  position: absolute;
+  inset: 14%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #e8e8e8;
+}
+
+.console__round {
+  margin: 0;
+  line-height: 1.1;
+}
+
+.console__wind {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.console__num {
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+
+.console__wall {
+  margin: 0.15rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #a8d4ff;
+}
+
+.console__hint {
+  margin: 0.1rem 0 0;
+  font-size: 0.55rem;
+  opacity: 0.55;
+}
+
+.console__rim {
+  position: absolute;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+.rim--n {
+  top: -2px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #c9b8e8;
+  color: #3a2a55;
+}
+
+.rim--s {
+  bottom: -2px;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  background: #f5a8c8;
+  color: #5a2040;
+}
+
+.rim--e {
+  right: -2px;
+  top: 50%;
+  transform: translate(50%, -50%);
+  background: #ff8a8a;
+  color: #5a1010;
+}
+
+.rim--w {
+  left: -2px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* —— Rivers —— */
+.river {
+  position: absolute;
+  display: flex;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.river__row {
+  display: flex;
+  gap: 1px;
+}
+
+.river--top {
+  top: 0;
+  left: 10%;
+  right: 10%;
+  flex-direction: column;
+  align-items: center;
+  max-height: 32%;
+}
+
+.river--bottom {
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  flex-direction: column-reverse;
+  align-items: center;
+  max-height: 32%;
+}
+
+.river--left {
+  left: 0;
+  top: 12%;
+  bottom: 12%;
+  flex-direction: row;
+  align-items: center;
+  max-width: 26%;
+}
+
+.river--right {
+  right: 0;
+  top: 12%;
+  bottom: 12%;
+  flex-direction: row-reverse;
+  align-items: center;
+  max-width: 26%;
+}
+
+.river--left .river__row,
+.river--right .river__row {
+  flex-direction: column;
+}
+
+.river--active .river__row:last-child .mj-tile:last-child {
+  outline: 2px solid #ffeb3b;
+  outline-offset: 1px;
+}
+
+.app--ref .seat {
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.app--ref .seat__hand {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.app--ref .seat__hand--bottom,
+.app--ref .seat__hand--top {
+  flex-direction: row;
+}
+
+/* 上／下家：與對家相同橫向背牌，整排旋轉貼邊 */
+.app--ref .seat__hand--left,
+.app--ref .seat__hand--right {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  position: absolute;
+  top: 50%;
+  width: max-content;
+  max-width: none;
+}
+
+.app--ref .seat__hand--left {
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center center;
+}
+
+.app--ref .seat__hand--right {
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center center;
+}
+
+.app--ref .seat--left,
+.app--ref .seat--right {
+  position: relative;
+  align-self: stretch;
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.app--ref .seat__drawn-gap {
+  width: 8px;
+  flex-shrink: 0;
+  margin: 0 4px;
+  align-self: stretch;
+  border-left: 2px dashed rgba(255, 255, 255, 0.35);
+}
+
+/* —— Tiles (ref style) —— */
+.app--ref .mj-tile {
+  --tile-w: 40px;
+  --tile-h: 54px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fffef8 0%, #ece4d4 100%);
+  box-shadow: 0 1px 0 #bbb, 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.app--ref .mj-tile--small {
+  --tile-w: 24px;
+  --tile-h: 32px;
+}
+
+.app--ref .mj-tile--opp {
+  --tile-w: 32px;
+  --tile-h: 44px;
+  font-size: 0.78rem;
+}
+
+.app--ref .mj-tile--stand {
+  --tile-w: 30px;
+  --tile-h: 42px;
+}
+
+.app--ref .mj-tile--meld {
+  --tile-w: 32px;
+  --tile-h: 42px;
+  font-size: 0.72rem;
+}
+
+.app--ref .mj-tile--river {
+  --tile-w: 30px;
+  --tile-h: 38px;
+  font-size: 0.62rem;
+}
+
+.app--ref .mj-tile--tiny {
+  --tile-w: 20px;
+  --tile-h: 26px;
+}
+
+.app--ref .mj-tile--back {
+  background: linear-gradient(145deg, #3d9a62 0%, #2a7a4a 50%, #1f5c38 100%);
+  box-shadow: 0 1px 0 #145028;
+}
+
+.app--ref .mj-tile--highlight {
+  outline: 2px solid #ffeb3b;
+  outline-offset: 1px;
+  z-index: 2;
+}
+
+.app--ref .mj-tile--lift,
+.app--ref .mj-tile--selected {
+  transform: translateY(-8px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+}
+
+.app--ref .action-bar {
+  padding: 0.35rem 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: auto;
+}
+
+.app--ref .action-bar__msg {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.app--ref .btn--ghost {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.app--ref .btn--sm {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 720px) {
+  .arena {
+    height: min(40vh, 300px);
+  }
+
+  .app--ref .seat--left,
+  .app--ref .seat--right {
+    width: 40px;
+  }
+
+  .app--ref .mj-tile {
+    --tile-w: 32px;
+    --tile-h: 44px;
+  }
+
+  .app--ref .mj-tile--river {
+    --tile-w: 26px;
+    --tile-h: 34px;
+  }
+
+  .app--ref .mj-tile--meld {
+    --tile-w: 28px;
+    --tile-h: 38px;
+  }
+}
