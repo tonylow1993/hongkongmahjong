@@ -133,14 +133,34 @@
 
 /* 旋轉後的外框等於牌的實際佔位，避免畫出桌外 */
 .exposed__slot--turn {
-  width: 44px;
-  height: 34px;
+  width: 54px;
+  height: 40px;
 }
 
 .exposed--seat-0 {
   right: 6px;
   bottom: 56px;
   justify-content: flex-end;
+  max-width: none;
+}
+
+/* 自己／對家：副露疊高，避免橫向蓋手牌 */
+.exposed--seat-0 .exposed__spin {
+  flex-direction: column-reverse;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  max-width: none;
+}
+
+.exposed--seat-2 .exposed__spin {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  max-width: none;
+}
+
+.exposed--seat-2 {
+  max-width: none;
 }
 
 /* 下家（右）貼右上角，留在桌內 */
@@ -392,49 +412,76 @@
 .river {
   position: absolute;
   display: flex;
-  gap: 2px;
+  gap: 1px;
   pointer-events: none;
+  z-index: 1;
 }
 
 .river__row {
   display: flex;
   gap: 1px;
+  flex-shrink: 0;
 }
 
 .river--top {
-  top: 0;
-  left: 10%;
-  right: 10%;
+  top: 2px;
+  left: 8%;
+  right: 8%;
   flex-direction: column;
   align-items: center;
-  max-height: 32%;
+  justify-content: flex-start;
+  max-height: 36%;
 }
 
 .river--bottom {
-  bottom: 0;
-  left: 10%;
-  right: 10%;
+  bottom: 2px;
+  left: 8%;
+  right: 8%;
   flex-direction: column-reverse;
   align-items: center;
-  max-height: 32%;
+  justify-content: flex-end;
+  max-height: 36%;
 }
 
 .river--left {
-  left: 0;
-  top: 12%;
-  bottom: 12%;
+  left: 2px;
+  top: 10%;
+  bottom: 10%;
   flex-direction: row;
   align-items: center;
-  max-width: 26%;
+  justify-content: flex-start;
+  max-width: 28%;
 }
 
 .river--right {
-  right: 0;
-  top: 12%;
-  bottom: 12%;
+  right: 2px;
+  top: 10%;
+  bottom: 10%;
   flex-direction: row-reverse;
   align-items: center;
-  max-width: 26%;
+  justify-content: flex-end;
+  max-width: 28%;
+}
+
+.river--dense .mj-tile--river {
+  --tile-w: 32px;
+  --tile-h: 42px;
+}
+
+.river--denser .mj-tile--river {
+  --tile-w: 27px;
+  --tile-h: 36px;
+}
+
+.river--compact .mj-tile--river {
+  --tile-w: 22px;
+  --tile-h: 30px;
+}
+
+.river--dense .river__row,
+.river--denser .river__row,
+.river--compact .river__row {
+  gap: 0;
 }
 
 .river--left .river__row,
@@ -491,7 +538,7 @@
 .app--ref .seat--right {
   position: relative;
   align-self: stretch;
-  width: 48px;
+  width: 70px;
   flex-shrink: 0;
 }
 
@@ -505,44 +552,49 @@
 
 /* —— Tiles (ref style) —— */
 .app--ref .mj-tile {
-  --tile-w: 40px;
-  --tile-h: 54px;
-  border-radius: 3px;
+  --tile-w: 56px;
+  --tile-h: 76px;
+  border-radius: 4px;
   background: linear-gradient(180deg, #fffef8 0%, #ece4d4 100%);
   box-shadow: 0 1px 0 #bbb, 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 3px;
+}
+
+.app--ref .mj-face {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
 }
 
 .app--ref .mj-tile--small {
-  --tile-w: 24px;
-  --tile-h: 32px;
+  --tile-w: 32px;
+  --tile-h: 44px;
 }
 
 .app--ref .mj-tile--opp {
-  --tile-w: 32px;
-  --tile-h: 44px;
-  font-size: 0.78rem;
+  --tile-w: 44px;
+  --tile-h: 60px;
 }
 
 .app--ref .mj-tile--stand {
-  --tile-w: 30px;
-  --tile-h: 42px;
+  --tile-w: 40px;
+  --tile-h: 54px;
 }
 
 .app--ref .mj-tile--meld {
-  --tile-w: 32px;
-  --tile-h: 42px;
-  font-size: 0.72rem;
+  --tile-w: 40px;
+  --tile-h: 54px;
 }
 
 .app--ref .mj-tile--river {
-  --tile-w: 30px;
-  --tile-h: 38px;
-  font-size: 0.62rem;
+  --tile-w: 38px;
+  --tile-h: 50px;
 }
 
 .app--ref .mj-tile--tiny {
-  --tile-w: 20px;
-  --tile-h: 26px;
+  --tile-w: 28px;
+  --tile-h: 36px;
 }
 
 .app--ref .mj-tile--back {
@@ -591,21 +643,31 @@
 
   .app--ref .seat--left,
   .app--ref .seat--right {
-    width: 40px;
+    width: 58px;
   }
 
   .app--ref .mj-tile {
-    --tile-w: 32px;
-    --tile-h: 44px;
+    --tile-w: 44px;
+    --tile-h: 60px;
+  }
+
+  .app--ref .mj-tile--opp {
+    --tile-w: 36px;
+    --tile-h: 48px;
   }
 
   .app--ref .mj-tile--river {
-    --tile-w: 26px;
-    --tile-h: 34px;
+    --tile-w: 30px;
+    --tile-h: 40px;
   }
 
   .app--ref .mj-tile--meld {
-    --tile-w: 28px;
-    --tile-h: 38px;
+    --tile-w: 34px;
+    --tile-h: 46px;
+  }
+
+  .exposed__slot--turn {
+    width: 46px;
+    height: 34px;
   }
 }

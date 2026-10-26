@@ -1,5 +1,6 @@
 import type { Tile } from '../game/types';
 import { tileLabel } from '../game/tiles';
+import { TileFace } from './TileFace';
 
 export type TileOrient = 'horiz' | 'vert-left' | 'vert-right' | 'flip';
 
@@ -41,7 +42,6 @@ export function TileView({
   lift,
 }: Props) {
   const label = tileLabel(tile);
-  const colorClass = tileColor(tile);
 
   const sizeClass = tiny
     ? 'mj-tile--tiny'
@@ -71,7 +71,6 @@ export function TileView({
       type="button"
       className={[
         'mj-tile',
-        colorClass,
         sizeClass,
         `mj-tile--${orient}`,
         selected ? 'mj-tile--selected' : '',
@@ -86,20 +85,7 @@ export function TileView({
       disabled={disabled || !onClick}
       aria-label={label}
     >
-      <span className="mj-tile__label">{label}</span>
+      <TileFace suit={tile.suit} value={tile.value} />
     </button>
   );
-}
-
-function tileColor(tile: Tile): string {
-  if (tile.suit === 'dragon') {
-    if (tile.value === 1) return 'mj-tile--red'; // 中
-    if (tile.value === 2) return 'mj-tile--green'; // 發
-    return 'mj-tile--blue'; // 白
-  }
-  if (tile.suit === 'wind') return 'mj-tile--wind';
-  if (tile.suit === 'flower') return 'mj-tile--flower';
-  if (tile.suit === 'man') return 'mj-tile--man';
-  if (tile.suit === 'sou') return 'mj-tile--sou';
-  return 'mj-tile--pin';
 }

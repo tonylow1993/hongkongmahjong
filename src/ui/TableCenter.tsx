@@ -2,8 +2,6 @@ import type { GameState, Tile } from '../game/types';
 import { WIND_LABELS } from '../game/types';
 import { TileView } from './TileView';
 
-const ROW_SIZE = 6;
-
 interface Props {
   state: GameState;
 }
@@ -12,6 +10,20 @@ function chunk<T>(items: T[], size: number): T[][] {
   const rows: T[][] = [];
   for (let i = 0; i < items.length; i += size) rows.push(items.slice(i, i + size));
   return rows;
+}
+
+function riverPlan(count: number, side: 'top' | 'bottom' | 'left' | 'right') {
+  const vertical = side === 'left' || side === 'right';
+  if (count <= 12) {
+    return { rowSize: vertical ? 4 : 6, density: '' };
+  }
+  if (count <= 20) {
+    return { rowSize: vertical ? 5 : 8, density: 'river--dense' };
+  }
+  if (count <= 28) {
+    return { rowSize: vertical ? 6 : 10, density: 'river--denser' };
+  }
+  return { rowSize: vertical ? 7 : 12, density: 'river--compact' };
 }
 
 function River({
@@ -25,10 +37,11 @@ function River({
   active: boolean;
   lastId: string | null;
 }) {
-  const rows = chunk(tiles, side === 'left' || side === 'right' ? 4 : ROW_SIZE);
+  const { rowSize, density } = riverPlan(tiles.length, side);
+  const rows = chunk(tiles, rowSize);
 
   return (
-    <div className={`river river--${side} ${active ? 'river--active' : ''}`}>
+    <div className={`river river--${side} ${density} ${active ? 'river--active' : ''}`}>
       {rows.map((row, ri) => (
         <div key={ri} className="river__row">
           {row.map((t) => (
