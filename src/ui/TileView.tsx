@@ -1,5 +1,5 @@
-import type { Tile } from '../game/types';
-import { tileLabel } from '../game/tiles';
+import type { Tile, Wind } from '../game/types';
+import { isSeatFlower, tileLabel } from '../game/tiles';
 import { TileFace } from './TileFace';
 
 export type TileOrient = 'horiz' | 'vert-left' | 'vert-right' | 'flip';
@@ -20,6 +20,8 @@ interface Props {
   /** 副露（橫放） */
   meld?: boolean;
   orient?: TileOrient;
+  /** 花牌所屬座位，用來標正花／不正花 */
+  flowerSeat?: Wind;
   disabled?: boolean;
   onClick?: () => void;
   lift?: boolean;
@@ -37,6 +39,7 @@ export function TileView({
   river,
   meld,
   orient = 'horiz',
+  flowerSeat,
   disabled,
   onClick,
   lift,
@@ -83,9 +86,16 @@ export function TileView({
         .join(' ')}
       onClick={disabled ? undefined : onClick}
       disabled={disabled || !onClick}
-      aria-label={label}
+      aria-label={
+        tile.suit === 'flower' && flowerSeat !== undefined && isSeatFlower(tile, flowerSeat)
+          ? `${label}正花`
+          : label
+      }
     >
       <TileFace suit={tile.suit} value={tile.value} />
+      {tile.suit === 'flower' && flowerSeat !== undefined && isSeatFlower(tile, flowerSeat) && (
+        <span className="mj-tile__flower mj-tile__flower--own">正花</span>
+      )}
     </button>
   );
 }

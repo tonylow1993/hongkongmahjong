@@ -24,7 +24,7 @@ export function ExposedCorner({ player, seat }: Props) {
 
   const tile = (id: string, t: Parameters<typeof TileView>[0]['tile'], faceDown = false) => (
     <span key={id} className={turned ? 'exposed__slot exposed__slot--turn' : 'exposed__slot'}>
-      <TileView tile={t} meld orient={orient} faceDown={faceDown} />
+      <TileView tile={t} meld orient={orient} faceDown={faceDown} flowerSeat={player.seatWind} />
     </span>
   );
 

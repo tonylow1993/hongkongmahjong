@@ -38,7 +38,7 @@ function refreshCount(): number {
 
 export const useGameStore = create<GameStore>((set, get) => ({
   state: createNewGame(),
-  ai: createAI('heuristic-v1'),
+  ai: createAI('learned-v1'),
   aiThinking: false,
   showTraining: false,
   sampleCount: refreshCount(),

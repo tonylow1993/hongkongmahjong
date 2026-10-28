@@ -1,22 +1,26 @@
-import { estimateHandPotential } from '../game/scoring';
-import { isHonor, sameTile, tileKey } from '../game/tiles';
 import type { ClaimOption, GameState, Tile } from '../game/types';
+import { tileKey } from '../game/tiles';
 import { featuresForDiscard, extractFeatures } from './features';
 import { trainingLogger } from './logger';
+import { LearnedAI } from './model';
+import { allowSelfKong, scoreClaim, scoreDiscardCandidate } from './policy';
 import { RandomAI } from './random';
 import type { AIAgent } from './types';
 
 /**
- * 規則式啟發式 AI（初版）。
- * - 優先保留對子／刻子／同花色
- * - 危險牌（場上已多）較早丟
- * - 叫牌：糊 > 槓 > 碰 > 吃（視潛力）
- *
- * 所有決策都會寫入 trainingLogger，方便日後監督／強化訓練。
+ * 三番起糊啟發式：
+ * 先定番型路徑（混一色／對對糊／門清平胡／番子搭橋），
+ * 無番不開門；終盤或他家聽牌信號改打安全牌。
+ * 決策寫入 trainingLogger，供之後監督訓練。
  */
 export class HeuristicAI implements AIAgent {
   readonly id = 'heuristic-v1';
   readonly name = '啟發式 AI';
+  private readonly logDecisions: boolean;
+
+  constructor(logDecisions = true) {
+    this.logDecisions = logDecisions;
+  }
 
   chooseDiscard(state: GameState, playerId: number, legal: Tile[]): Tile {
     let best = legal[0];
@@ -24,7 +28,7 @@ export class HeuristicAI implements AIAgent {
     const labels = legal.map((t) => tileKey(t));
 
     legal.forEach((tile, index) => {
-      const score = this.scoreDiscard(state, playerId, tile);
+      const score = scoreDiscardCandidate(state, playerId, tile);
       if (score > bestScore) {
         bestScore = score;
         best = tile;
@@ -38,7 +42,7 @@ export class HeuristicAI implements AIAgent {
 
     const chosen = legal.findIndex((t) => t.id === best.id);
     const feat = featuresForDiscard(state, playerId, best);
-    trainingLogger.log({
+    if (this.logDecisions) trainingLogger.log({
       timestamp: Date.now(),
       agentId: this.id,
       playerId,
@@ -56,13 +60,13 @@ export class HeuristicAI implements AIAgent {
 
   chooseClaim(state: GameState, playerId: number, options: ClaimOption[]): ClaimOption {
     const ranked = [...options].sort(
-      (a, b) => this.claimScore(state, playerId, b) - this.claimScore(state, playerId, a),
+      (a, b) => scoreClaim(state, playerId, b) - scoreClaim(state, playerId, a),
     );
     const best = ranked[0];
     const labels = options.map((o) => o.kind + (o.fan ? `:${o.fan}` : ''));
     const feat = extractFeatures(state, playerId, state.lastDiscard ?? undefined);
 
-    trainingLogger.log({
+    if (this.logDecisions) trainingLogger.log({
       timestamp: Date.now(),
       agentId: this.id,
       playerId,
@@ -90,7 +94,7 @@ export class HeuristicAI implements AIAgent {
       return win;
     }
     const kong = options.find((o) => o.kind === 'kong');
-    if (kong && state.wall.length > 20) {
+    if (kong && allowSelfKong(state, playerId)) {
       this.logSelf(state, playerId, options, kong);
       return kong;
     }
@@ -105,7 +109,7 @@ export class HeuristicAI implements AIAgent {
   ): void {
     const labels = options.map((o) => o.kind);
     const feat = extractFeatures(state, playerId);
-    trainingLogger.log({
+    if (this.logDecisions) trainingLogger.log({
       timestamp: Date.now(),
       agentId: this.id,
       playerId,
@@ -118,85 +122,16 @@ export class HeuristicAI implements AIAgent {
     });
   }
 
-  private scoreDiscard(state: GameState, playerId: number, tile: Tile): number {
-    const p = state.players[playerId];
-    const hand = p.hand.filter((t) => t.id !== tile.id);
-    const counts = new Map<string, number>();
-    for (const t of hand) {
-      const k = tileKey(t);
-      counts.set(k, (counts.get(k) ?? 0) + 1);
-    }
-    const key = tileKey(tile);
-    const remaining = (counts.get(key) ?? 0) + 1; // 含自己這張前
-
-    // 高分 = 更適合丟
-    let score = 0;
-
-    // 單張孤張優先丟
-    const inHand = p.hand.filter((t) => sameTile(t, tile)).length;
-    if (inHand === 1) score += 30;
-    if (inHand === 2) score -= 40; // 留對
-    if (inHand >= 3) score -= 80; // 留刻
-
-    // 字牌無對較早丟
-    if (isHonor(tile) && inHand === 1) score += 25;
-
-    // 場上已出現多張 → 較安全也較沒用
-    let seen = 0;
-    for (const pl of state.players) {
-      seen += pl.discards.filter((t) => sameTile(t, tile)).length;
-    }
-    score += seen * 8;
-
-    // 花色集中：丟少數花色
-    const suits = { man: 0, pin: 0, sou: 0 };
-    for (const t of hand) {
-      if (t.suit in suits) suits[t.suit as 'man' | 'pin' | 'sou']++;
-    }
-    if (tile.suit === 'man' || tile.suit === 'pin' || tile.suit === 'sou') {
-      const mine = suits[tile.suit];
-      const max = Math.max(suits.man, suits.pin, suits.sou);
-      if (mine < max - 2) score += 15;
-      if (mine === max) score -= 10;
-    }
-
-    // 模擬丟牌後潛力
-    const simulated = {
-      ...p,
-      hand,
-    };
-    score -= estimateHandPotential(simulated) * 0.3;
-
-    void remaining;
-    return score;
-  }
-
-  private claimScore(state: GameState, playerId: number, opt: ClaimOption): number {
-    if (opt.kind === 'pass') return 0;
-    if (opt.kind === 'win') return 1000 + (opt.fan ?? 0) * 10;
-    if (opt.kind === 'kong') return 50;
-    if (opt.kind === 'pong') {
-      // 碰字牌較有價值
-      const t = state.lastDiscard;
-      if (t && isHonor(t)) return 45;
-      return 30;
-    }
-    if (opt.kind === 'chow') {
-      // 吃會破門清，潛力高才吃
-      const pot = estimateHandPotential(state.players[playerId]);
-      return pot > 25 ? 15 : 5;
-    }
-    return 0;
-  }
 }
 
 /** 之後可註冊更多代理：例如 NeuralAI */
 export const AI_REGISTRY: Record<string, () => AIAgent> = {
   'heuristic-v1': () => new HeuristicAI(),
+  'learned-v1': () => new LearnedAI(),
   'random-v1': () => new RandomAI(),
 };
 
-export function createAI(id = 'heuristic-v1'): AIAgent {
+export function createAI(id = 'learned-v1'): AIAgent {
   const factory = AI_REGISTRY[id] ?? AI_REGISTRY['heuristic-v1'];
   return factory();
 }

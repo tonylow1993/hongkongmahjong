@@ -1,5 +1,6 @@
 import type { FanDetail, Meld, PlayerState, Tile, Wind, WinInfo } from './types';
-import { sameTile, tileKey } from './tiles';
+import { FLOWER_LABELS, WIND_LABELS } from './types';
+import { isSeatFlower, sameTile, tileKey } from './tiles';
 import {
   allMeldsArePongs,
   canWinStandard,
@@ -115,8 +116,8 @@ function addHonorFans(
     if (t.suit === 'wind') {
       windPongs++;
       windValues.add(t.value);
-      if (t.value === seatWind) details.push({ name: '門風', fan: 1 });
-      if (t.value === roundWind) details.push({ name: '圈風', fan: 1 });
+      if (t.value === seatWind) details.push({ name: `位風（${WIND_LABELS[t.value - 1]}）`, fan: 1 });
+      if (t.value === roundWind) details.push({ name: `圈風（${WIND_LABELS[t.value - 1]}）`, fan: 1 });
     }
   }
 
@@ -137,19 +138,10 @@ function addHonorFans(
 }
 
 function addFlowerFans(details: FanDetail[], player: PlayerState): void {
-  const seat = player.seatWind; // 0-3 → 花 1-4 春夏秋冬 / 5-8 梅蘭菊竹
-  let n = 0;
-  for (const f of player.flowers) {
-    // 正花：春/梅=東, 夏/蘭=南, 秋/菊=西, 冬/竹=北
-    const season = ((f.value - 1) % 4);
-    if (season === seat) n += 1;
+  const own = player.flowers.filter((f) => isSeatFlower(f, player.seatWind));
+  for (const f of own) {
+    details.push({ name: `正花（${FLOWER_LABELS[f.value - 1]}）`, fan: 1 });
   }
-  // 每朵花至少 1 番（簡化：所有花各 1，正花已含）
-  if (player.flowers.length > 0) {
-    details.push({ name: `花牌 ×${player.flowers.length}`, fan: player.flowers.length });
-  }
-  // 避免正花重複加——上面已用總數簡化
-  void n;
 }
 
 function sum(details: FanDetail[]): number {
@@ -221,5 +213,6 @@ export function estimateHandPotential(player: PlayerState): number {
     if (c >= 2) pairs++;
     if (c >= 3) pungs++;
   }
-  return maxSuit * 2 + pairs * 3 + pungs * 5 + player.melds.length * 4 + player.flowers.length;
+  return maxSuit * 2 + pairs * 3 + pungs * 5 + player.melds.length * 4 +
+    player.flowers.filter((f) => isSeatFlower(f, player.seatWind)).length;
 }

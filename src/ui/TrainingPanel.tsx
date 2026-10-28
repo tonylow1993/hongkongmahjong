@@ -29,7 +29,7 @@ export function TrainingPanel({
             <span>已收集樣本</span>
           </div>
           <div>
-            <strong>heuristic-v1</strong>
+            <strong>learned-v1</strong>
             <span>現行代理</span>
           </div>
         </div>

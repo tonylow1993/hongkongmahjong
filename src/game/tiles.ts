@@ -1,4 +1,4 @@
-import type { Suit, Tile } from './types';
+import type { Suit, Tile, Wind } from './types';
 import { DRAGON_LABELS, FLOWER_LABELS, WIND_LABELS } from './types';
 
 let tileSeq = 0;
@@ -45,6 +45,12 @@ export function shuffle<T>(arr: T[], rng: () => number = Math.random): T[] {
 
 export function isFlower(t: Tile): boolean {
   return t.suit === 'flower';
+}
+
+/** 正花：春／梅＝東，夏／蘭＝南，秋／菊＝西，冬／竹＝北 */
+export function isSeatFlower(tile: Tile, seatWind: Wind): boolean {
+  if (!isFlower(tile)) return false;
+  return (tile.value - 1) % 4 === seatWind;
 }
 
 export function isHonor(t: Tile): boolean {

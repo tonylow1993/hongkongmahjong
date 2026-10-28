@@ -509,10 +509,30 @@
   font-weight: 700;
   color: #1a1208;
   cursor: default;
+  position: relative;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   flex-shrink: 0;
   line-height: 1.1;
   user-select: none;
+}
+
+.mj-tile__flower {
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  font-size: 8px;
+  line-height: 1.1;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.92);
+  color: #5c6570;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.mj-tile__flower--own {
+  color: #a01010;
+  font-weight: 800;
 }
 
 .mj-tile--small {

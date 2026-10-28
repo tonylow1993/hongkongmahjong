@@ -1,6 +1,7 @@
 import { estimateHandPotential } from '../game/scoring';
 import { tileKey } from '../game/tiles';
 import type { GameState, Tile } from '../game/types';
+import { shanten } from './policy';
 
 export const FEATURE_NAMES = [
   'handSize',
@@ -18,7 +19,8 @@ export const FEATURE_NAMES = [
   'suitPin',
   'suitSou',
   'honorCount',
-  'discardDanger', // 粗略：場上同牌已出數
+  'discardDanger',
+  'shanten',
 ] as const;
 
 /**
@@ -80,6 +82,7 @@ export function extractFeatures(
     suitSou,
     honorCount,
     discardDanger,
+    shanten(hand, p.melds.length),
   ];
 
   return { values, names: [...FEATURE_NAMES] };
