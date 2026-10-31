@@ -67,10 +67,11 @@ export interface WinInfo {
   details: FanDetail[];
   winningTile: Tile;
   isSelfDraw: boolean;
-  /** 二五半檔位 */
-  tier?: '二' | '五' | '半';
+  /** 檔位或稱謂 */
+  tier?: string;
   baseLa?: number;
-  /** 本局各家加減辣 */
+  basePoints?: number;
+  /** 本局各家加減分數（點數） */
   scoreDeltas?: number[];
   settlementNotes?: string[];
 }
@@ -109,8 +110,8 @@ export const WIND_LABELS = ['東', '南', '西', '北'] as const;
 export const DRAGON_LABELS = ['中', '發', '白'] as const;
 export const FLOWER_LABELS = ['春', '夏', '秋', '冬', '梅', '蘭', '菊', '竹'] as const;
 
-/** 開台每家底分（二五半辣數累計在此基數上） */
-export const INITIAL_TABLE_SCORE = 100;
+/** 開台每家底分（1000分） */
+export const INITIAL_TABLE_SCORE = 1000;
 
 export const DEFAULT_CONFIG: GameConfig = {
   minFan: 3,

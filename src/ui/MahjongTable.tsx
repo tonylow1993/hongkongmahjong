@@ -9,6 +9,7 @@ interface Props {
   selectedId: string | null;
   onSelectTile: (id: string) => void;
   canInteract: boolean;
+  mySeat?: number; // 預設為 0
 }
 
 export function MahjongTable({
@@ -16,59 +17,69 @@ export function MahjongTable({
   selectedId,
   onSelectTile,
   canInteract,
+  mySeat = 0,
 }: Props) {
-  const humanTurn = state.phase === 'discard' && state.currentPlayer === 0;
+  const isEnded = state.phase === 'ended';
+  const humanTurn = state.phase === 'discard' && state.currentPlayer === mySeat;
   const humanDrawn = humanTurn && state.drawnTile ? state.drawnTile : null;
+
+  // 視角旋轉：以 mySeat 為 bottom (主視角 0 度)，其餘依序為 right (+1), top (+2), left (+3)
+  const bottomSeat = mySeat;
+  const rightSeat = (mySeat + 1) % 4;
+  const topSeat = (mySeat + 2) % 4;
+  const leftSeat = (mySeat + 3) % 4;
 
   return (
     <div className="mj-table">
-      {([0, 1, 2, 3] as const).map((id) => (
-        <ExposedCorner key={id} player={state.players[id]} seat={id} />
-      ))}
+      {/* 副露與花牌區域（以 mySeat 為主視角旋轉：0=下自己, 1=右下家, 2=上對家, 3=左上家） */}
+      <ExposedCorner player={state.players[bottomSeat]} seat={0} />
+      <ExposedCorner player={state.players[rightSeat]} seat={1} />
+      <ExposedCorner player={state.players[topSeat]} seat={2} />
+      <ExposedCorner player={state.players[leftSeat]} seat={3} />
 
       <div className="mj-table__top">
         <PlayerHud
-          player={state.players[2]}
+          player={state.players[topSeat]}
           side="top"
-          isDealer={state.dealer === 2}
-          isCurrent={state.currentPlayer === 2}
+          isDealer={state.dealer === topSeat}
+          isCurrent={state.currentPlayer === topSeat}
         />
-        <SeatRail player={state.players[2]} side="top" showHand={false} />
+        <SeatRail player={state.players[topSeat]} side="top" showHand={isEnded} />
       </div>
 
       <div className="mj-table__mid">
         <div className="mj-table__wing mj-table__wing--left">
           <PlayerHud
-            player={state.players[3]}
+            player={state.players[leftSeat]}
             side="left"
-            isDealer={state.dealer === 3}
-            isCurrent={state.currentPlayer === 3}
+            isDealer={state.dealer === leftSeat}
+            isCurrent={state.currentPlayer === leftSeat}
           />
-          <SeatRail player={state.players[3]} side="left" showHand={false} />
+          <SeatRail player={state.players[leftSeat]} side="left" showHand={isEnded} />
         </div>
 
-        <TableCenter state={state} />
+        <TableCenter state={state} mySeat={mySeat} />
 
         <div className="mj-table__wing mj-table__wing--right">
           <PlayerHud
-            player={state.players[1]}
+            player={state.players[rightSeat]}
             side="right"
-            isDealer={state.dealer === 1}
-            isCurrent={state.currentPlayer === 1}
+            isDealer={state.dealer === rightSeat}
+            isCurrent={state.currentPlayer === rightSeat}
           />
-          <SeatRail player={state.players[1]} side="right" showHand={false} />
+          <SeatRail player={state.players[rightSeat]} side="right" showHand={isEnded} />
         </div>
       </div>
 
       <div className="mj-table__bottom">
         <PlayerHud
-          player={state.players[0]}
+          player={state.players[bottomSeat]}
           side="bottom"
-          isDealer={state.dealer === 0}
-          isCurrent={state.currentPlayer === 0}
+          isDealer={state.dealer === bottomSeat}
+          isCurrent={state.currentPlayer === bottomSeat}
         />
         <SeatRail
-          player={state.players[0]}
+          player={state.players[bottomSeat]}
           side="bottom"
           showHand={true}
           drawnTile={humanDrawn}

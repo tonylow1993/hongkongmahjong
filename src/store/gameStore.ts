@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { createAI, downloadTrainingData, trainingLogger, type AIAgent } from '../ai';
+import { askModel, claimFromAct, modelReady, selfFromAct, tileFromAct } from '../ai/trainedClient';
 import {
   createNewGame,
   discardTile,
@@ -13,13 +14,21 @@ import {
 import { sortTiles } from '../game/tiles';
 import type { ClaimOption, GameState } from '../game/types';
 
+export type OpponentMode = 'local' | 'trained';
+export type AILevel = 'local' | 'level-1' | 'level-2' | 'level-3';
+
 interface GameStore {
   state: GameState;
   ai: AIAgent;
+  aiLevel: AILevel;
+  opponentMode: OpponentMode;
+  modeError: string | null;
   aiThinking: boolean;
   showTraining: boolean;
   sampleCount: number;
 
+  setAILevel: (level: AILevel) => void;
+  setOpponentMode: (mode: OpponentMode) => void;
   newGame: () => void;
   nextRound: () => void;
   discard: (tileId: string) => void;
@@ -36,12 +45,48 @@ function refreshCount(): number {
   return trainingLogger.size();
 }
 
+const INITIAL_LEVEL: AILevel =
+  typeof window !== 'undefined'
+    ? ((localStorage.getItem('hk_ai_level') as AILevel | null) ?? 'level-3')
+    : 'level-3';
+
 export const useGameStore = create<GameStore>((set, get) => ({
   state: createNewGame(),
   ai: createAI('learned-v1'),
+  aiLevel: INITIAL_LEVEL,
+  opponentMode: INITIAL_LEVEL === 'local' ? 'local' : 'trained',
+  modeError: null,
   aiThinking: false,
   showTraining: false,
   sampleCount: refreshCount(),
+
+  setAILevel: (level) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hk_ai_level', level);
+    }
+    if (level === 'local') {
+      set({ aiLevel: 'local', opponentMode: 'local', modeError: null });
+      queueMicrotask(() => get().tickAI());
+      return;
+    }
+    void modelReady().then((ok) => {
+      if (!ok) {
+        set({
+          aiLevel: level,
+          opponentMode: 'local',
+          modeError: 'AI 服務未連線（已由本地 AI 代打）。先執行 npm run coach:serve',
+        });
+        return;
+      }
+      set({ aiLevel: level, opponentMode: 'trained', modeError: null });
+      queueMicrotask(() => get().tickAI());
+    });
+  },
+
+  setOpponentMode: (mode) => {
+    const level: AILevel = mode === 'local' ? 'local' : 'level-3';
+    get().setAILevel(level);
+  },
 
   newGame: () => {
     set({ state: createNewGame(), aiThinking: false, sampleCount: refreshCount() });
@@ -73,10 +118,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const humanId = 0;
     if (!state.claimOptions[humanId]) return;
     let next = submitClaim(state, humanId, option);
-    // 其他 AI 的叫牌立刻補上
-    next = resolveAIClaims(next, get().ai);
-    set({ state: next, sampleCount: refreshCount() });
-    queueMicrotask(() => get().tickAI());
+    void (async () => {
+      if (get().opponentMode === 'trained') next = await resolveTrainedClaims(next);
+      else next = resolveAIClaims(next, get().ai);
+      set({ state: next, sampleCount: refreshCount() });
+      queueMicrotask(() => get().tickAI());
+    })();
   },
 
   doSelfAction: (option: ClaimOption) => {
@@ -111,6 +158,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   tickAI: () => {
+    if (ticking) {
+      tickAgain = true;
+      return;
+    }
+    ticking = true;
     const run = async () => {
       let guard = 0;
       while (guard++ < 40) {
@@ -137,7 +189,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
           set({ aiThinking: true });
           await sleep(350);
           let next = get().state;
-          next = resolveAIClaims(next, get().ai);
+          if (get().opponentMode === 'trained') next = await resolveTrainedClaims(next);
+          else next = resolveAIClaims(next, get().ai);
           set({ state: next, aiThinking: false, sampleCount: refreshCount() });
           continue;
         }
@@ -153,17 +206,37 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
           let next = get().state;
           const opts = next.claimOptions[pid] ?? [];
-          const self = get().ai.chooseSelfAction(next, pid, opts);
-          if (self) {
-            next = selfAction(next, self);
-            set({ state: next, aiThinking: false, sampleCount: refreshCount() });
-            continue;
+          const trained = get().opponentMode === 'trained';
+          let acted = false;
+          if (trained) {
+            try {
+              const act = await askModel(next, pid, get().aiLevel);
+              const self = selfFromAct(opts, act);
+              if (self) {
+                next = selfAction(next, self);
+                acted = true;
+              } else if (act.kind === 'discard') {
+                const legal = getLegalDiscards(next, pid);
+                if (legal.length === 0) break;
+                next = discardTile(next, tileFromAct(legal, act).id);
+                acted = true;
+              }
+              set({ modeError: null });
+            } catch {
+              set({ modeError: '訓練模型這一步沒有回應，已改由本地 AI 代打。' });
+            }
           }
-
-          const legal = getLegalDiscards(next, pid);
-          if (legal.length === 0) break;
-          const tile = get().ai.chooseDiscard(next, pid, legal);
-          next = discardTile(next, tile.id);
+          if (!acted) {
+            const self = get().ai.chooseSelfAction(next, pid, opts);
+            if (self) {
+              next = selfAction(next, self);
+            } else {
+              const legal = getLegalDiscards(next, pid);
+              if (legal.length === 0) break;
+              const tile = get().ai.chooseDiscard(next, pid, legal);
+              next = discardTile(next, tile.id);
+            }
+          }
           set({ state: next, aiThinking: false, sampleCount: refreshCount() });
           continue;
         }
@@ -172,9 +245,53 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
       set({ aiThinking: false });
     };
-    void run();
+    void run().finally(() => {
+      ticking = false;
+      if (tickAgain) {
+        tickAgain = false;
+        get().tickAI();
+      }
+    });
   },
 }));
+
+let ticking = false;
+let tickAgain = false;
+
+const TRAINED_OFFLINE = '訓練模型這一步沒有回應，已改由本地 AI 代打。';
+
+async function resolveTrainedClaims(state: GameState): Promise<GameState> {
+  let s = state;
+  if (s.phase !== 'claim') return s;
+  const local = useGameStore.getState().ai;
+  const level = useGameStore.getState().aiLevel;
+
+  for (const idStr of Object.keys(s.claimOptions)) {
+    const id = Number(idStr);
+    if (s.pendingClaims[id] !== undefined) continue;
+    if (s.players[id].isHuman) continue;
+    const opts = s.claimOptions[id] ?? [];
+    if (opts.length === 0) {
+      s = submitClaim(s, id, { kind: 'pass' });
+      continue;
+    }
+    try {
+      const act = await askModel(s, id, level);
+      s = submitClaim(s, id, claimFromAct(opts, act, s.lastDiscard));
+      useGameStore.setState({ modeError: null });
+    } catch {
+      s = submitClaim(s, id, local.chooseClaim(s, id, opts));
+      useGameStore.setState({ modeError: TRAINED_OFFLINE });
+    }
+  }
+
+  const waiting = Object.keys(s.claimOptions).map(Number);
+  const humanPending = waiting.some(
+    (id) => s.players[id].isHuman && s.pendingClaims[id] === undefined,
+  );
+  if (!humanPending && s.phase === 'claim') s = passAllClaims(s);
+  return s;
+}
 
 function resolveAIClaims(state: GameState, ai: AIAgent): GameState {
   let s = state;

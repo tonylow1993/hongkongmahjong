@@ -4,6 +4,7 @@ import { TileView } from './TileView';
 
 interface Props {
   state: GameState;
+  mySeat?: number;
 }
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -58,47 +59,52 @@ function River({
   );
 }
 
-/** 參考手遊：中央灰框 + 四邊河牌 */
-export function TableCenter({ state }: Props) {
+/** 參考手遊：中央灰框 + 四邊河牌（依據 mySeat 旋轉視角） */
+export function TableCenter({ state, mySeat = 0 }: Props) {
   const wind = WIND_LABELS[state.prevailingWind];
-  const p0 = state.players[0];
-  const p1 = state.players[1];
-  const p2 = state.players[2];
-  const p3 = state.players[3];
+  const bottomSeat = mySeat;
+  const rightSeat = (mySeat + 1) % 4;
+  const topSeat = (mySeat + 2) % 4;
+  const leftSeat = (mySeat + 3) % 4;
+
+  const pBottom = state.players[bottomSeat];
+  const pRight = state.players[rightSeat];
+  const pTop = state.players[topSeat];
+  const pLeft = state.players[leftSeat];
   const lastId = state.lastDiscard?.id ?? null;
 
   const rim = [
-    { side: 'top' as const, label: WIND_LABELS[p2.seatWind], cls: 'rim--n' },
-    { side: 'right' as const, label: WIND_LABELS[p1.seatWind], cls: 'rim--e' },
-    { side: 'bottom' as const, label: WIND_LABELS[p0.seatWind], cls: 'rim--s' },
-    { side: 'left' as const, label: WIND_LABELS[p3.seatWind], cls: 'rim--w' },
+    { side: 'top' as const, label: WIND_LABELS[pTop.seatWind], cls: 'rim--n' },
+    { side: 'right' as const, label: WIND_LABELS[pRight.seatWind], cls: 'rim--e' },
+    { side: 'bottom' as const, label: WIND_LABELS[pBottom.seatWind], cls: 'rim--s' },
+    { side: 'left' as const, label: WIND_LABELS[pLeft.seatWind], cls: 'rim--w' },
   ];
 
   return (
     <div className="arena">
       <River
-        tiles={p2.discards}
+        tiles={pTop.discards}
         side="top"
-        active={state.currentPlayer === 2}
-        lastId={state.lastDiscarder === 2 ? lastId : null}
+        active={state.currentPlayer === topSeat}
+        lastId={state.lastDiscarder === topSeat ? lastId : null}
       />
       <River
-        tiles={p3.discards}
+        tiles={pLeft.discards}
         side="left"
-        active={state.currentPlayer === 3}
-        lastId={state.lastDiscarder === 3 ? lastId : null}
+        active={state.currentPlayer === leftSeat}
+        lastId={state.lastDiscarder === leftSeat ? lastId : null}
       />
       <River
-        tiles={p1.discards}
+        tiles={pRight.discards}
         side="right"
-        active={state.currentPlayer === 1}
-        lastId={state.lastDiscarder === 1 ? lastId : null}
+        active={state.currentPlayer === rightSeat}
+        lastId={state.lastDiscarder === rightSeat ? lastId : null}
       />
       <River
-        tiles={p0.discards}
+        tiles={pBottom.discards}
         side="bottom"
-        active={state.currentPlayer === 0}
-        lastId={state.lastDiscarder === 0 ? lastId : null}
+        active={state.currentPlayer === bottomSeat}
+        lastId={state.lastDiscarder === bottomSeat ? lastId : null}
       />
 
       <div className="console">

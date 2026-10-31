@@ -1,0 +1,1203 @@
+
+pytorch
+2.15.0+cpu:≠°
+ï
+planes
+stem.0.weight
+stem.0.weight_biasgetitemnode_Conv_80"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+B
+getitem
+leaky_relunode_leaky_relu"	LeakyRelu*
+alphaÕÃL>†
+©
+
+leaky_relu
+trunk.0.conv1.weight
+trunk.0.conv1.weight_bias	getitem_3node_Conv_82"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+H
+	getitem_3leaky_relu_1node_leaky_relu_1"	LeakyRelu*
+alphaÕÃL>†
+´
+leaky_relu_1
+trunk.0.conv2.weight
+trunk.0.conv2.weight_bias	getitem_6node_Conv_84"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+/
+
+leaky_relu
+	getitem_6add_8
+node_add_8"Add
+D
+add_8leaky_relu_2node_leaky_relu_2"	LeakyRelu*
+alphaÕÃL>†
+´
+leaky_relu_2
+trunk.1.conv1.weight
+trunk.1.conv1.weight_bias	getitem_9node_Conv_86"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+H
+	getitem_9leaky_relu_3node_leaky_relu_3"	LeakyRelu*
+alphaÕÃL>†
+¨
+leaky_relu_3
+trunk.1.conv2.weight
+trunk.1.conv2.weight_bias
+getitem_12node_Conv_88"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+2
+leaky_relu_2
+
+getitem_12add_9
+node_add_9"Add
+D
+add_9leaky_relu_4node_leaky_relu_4"	LeakyRelu*
+alphaÕÃL>†
+¨
+leaky_relu_4
+trunk.2.conv1.weight
+trunk.2.conv1.weight_bias
+getitem_15node_Conv_90"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+I
+
+getitem_15leaky_relu_5node_leaky_relu_5"	LeakyRelu*
+alphaÕÃL>†
+¨
+leaky_relu_5
+trunk.2.conv2.weight
+trunk.2.conv2.weight_bias
+getitem_18node_Conv_92"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+4
+leaky_relu_4
+
+getitem_18add_10node_add_10"Add
+E
+add_10leaky_relu_6node_leaky_relu_6"	LeakyRelu*
+alphaÕÃL>†
+¨
+leaky_relu_6
+trunk.3.conv1.weight
+trunk.3.conv1.weight_bias
+getitem_21node_Conv_94"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+I
+
+getitem_21leaky_relu_7node_leaky_relu_7"	LeakyRelu*
+alphaÕÃL>†
+¨
+leaky_relu_7
+trunk.3.conv2.weight
+trunk.3.conv2.weight_bias
+getitem_24node_Conv_96"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+4
+leaky_relu_6
+
+getitem_24add_11node_add_11"Add
+E
+add_11leaky_relu_8node_leaky_relu_8"	LeakyRelu*
+alphaÕÃL>†
+¨
+leaky_relu_8
+trunk.4.conv1.weight
+trunk.4.conv1.weight_bias
+getitem_27node_Conv_98"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+I
+
+getitem_27leaky_relu_9node_leaky_relu_9"	LeakyRelu*
+alphaÕÃL>†
+≠
+leaky_relu_9
+trunk.4.conv2.weight
+trunk.4.conv2.weight_bias
+getitem_30node_Conv_100"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+4
+leaky_relu_8
+
+getitem_30add_12node_add_12"Add
+G
+add_12leaky_relu_10node_leaky_relu_10"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_10
+trunk.5.conv1.weight
+trunk.5.conv1.weight_bias
+getitem_33node_Conv_102"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+K
+
+getitem_33leaky_relu_11node_leaky_relu_11"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_11
+trunk.5.conv2.weight
+trunk.5.conv2.weight_bias
+getitem_36node_Conv_104"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+5
+leaky_relu_10
+
+getitem_36add_13node_add_13"Add
+G
+add_13leaky_relu_12node_leaky_relu_12"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_12
+trunk.6.conv1.weight
+trunk.6.conv1.weight_bias
+getitem_39node_Conv_106"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+K
+
+getitem_39leaky_relu_13node_leaky_relu_13"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_13
+trunk.6.conv2.weight
+trunk.6.conv2.weight_bias
+getitem_42node_Conv_108"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+5
+leaky_relu_12
+
+getitem_42add_14node_add_14"Add
+G
+add_14leaky_relu_14node_leaky_relu_14"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_14
+trunk.7.conv1.weight
+trunk.7.conv1.weight_bias
+getitem_45node_Conv_110"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+K
+
+getitem_45leaky_relu_15node_leaky_relu_15"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_15
+trunk.7.conv2.weight
+trunk.7.conv2.weight_bias
+getitem_48node_Conv_112"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+5
+leaky_relu_14
+
+getitem_48add_15node_add_15"Add
+G
+add_15leaky_relu_16node_leaky_relu_16"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_16
+trunk.8.conv1.weight
+trunk.8.conv1.weight_bias
+getitem_51node_Conv_114"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+K
+
+getitem_51leaky_relu_17node_leaky_relu_17"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_17
+trunk.8.conv2.weight
+trunk.8.conv2.weight_bias
+getitem_54node_Conv_116"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+5
+leaky_relu_16
+
+getitem_54add_16node_add_16"Add
+G
+add_16leaky_relu_18node_leaky_relu_18"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_18
+trunk.9.conv1.weight
+trunk.9.conv1.weight_bias
+getitem_57node_Conv_118"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+K
+
+getitem_57leaky_relu_19node_leaky_relu_19"	LeakyRelu*
+alphaÕÃL>†
+Æ
+leaky_relu_19
+trunk.9.conv2.weight
+trunk.9.conv2.weight_bias
+getitem_60node_Conv_120"Conv*
+group†*
+pads@@@@†*
+auto_pad"NOTSET†*
+strides@@†*
+	dilations@@†*
+kernel_shape@@†JV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConv
+5
+leaky_relu_18
+
+getitem_60add_17node_add_17"Add
+G
+add_17leaky_relu_20node_leaky_relu_20"	LeakyRelu*
+alphaÕÃL>†
+â
+leaky_relu_20
+val_246viewnode_Reshape_123"Reshape*
+	allowzero†J<
+!pkg.onnxscript.rewriter.rule_nameMaterializeReshapeShape
+x
+view
+fc.0.weight
+	fc.0.biaslinearnode_linear"Gemm*
+beta  Ä?†*
+transB†*
+alpha  Ä?†*
+transA †
+G
+linearleaky_relu_21node_leaky_relu_21"	LeakyRelu*
+alphaÕÃL>†
+ã
+leaky_relu_21
+discard.weight
+discard.biaslinear_1node_linear_1"Gemm*
+beta  Ä?†*
+transB†*
+alpha  Ä?†*
+transA †
+?
+discard_mask
+scalar_tensor_defaultlenode_le"LessOrEqual
+@
+le
+val_243
+linear_1discard_logitsnode_masked_fill"Where
+á
+leaky_relu_21
+claim.weight
+
+claim.biaslinear_2node_linear_2"Gemm*
+beta  Ä?†*
+transB†*
+alpha  Ä?†*
+transA †
+A
+
+claim_mask
+scalar_tensor_defaultle_1	node_le_1"LessOrEqual
+B
+le_1
+val_243
+linear_2claim_logitsnode_masked_fill_1"Where
+á
+leaky_relu_21
+value.weight
+
+value.biaslinear_3node_linear_3"Gemm*
+beta  Ä?†*
+transB†*
+alpha  Ä?†*
+transA †
+:
+linear_3
+val_245expected_valuenode_squeeze"Squeeze
+main_graph*ZÄB	fc.0.biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset0j
+length1024p*ù"Bdiscard.biasJà‘}èº*g=‡ä;Œ)¥ºÆ	ºÏ¬∞ºNzÈ<#Ä!Ω˜Zg=Veì;∏§={˛†=fˇº∫>nΩãç‘<çK;ÀvpΩÏùºº=àπï=JV˝ª˚6àΩFª‰;OÍhΩsÈÄ=Òÿò=¥Õê=ı&wΩ7ò∆=wxr=Áãª s9Ω F&Ω*&B
+claim.biasJÆ¨ù=îç•ΩóUü=‘®-Ω{˜>*bÄBvalue.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset1024j
+length1024p*B
+value.biasJepÔ:*iÄBstem.0.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset2048j
+length129024p*sÄÄBtrunk.0.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset131072j
+length589824p*sÄÄBtrunk.0.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset720896j
+length589824p*tÄÄBtrunk.1.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset1310720j
+length589824p*tÄÄBtrunk.1.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset1900544j
+length589824p*tÄÄBtrunk.2.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset2490368j
+length589824p*tÄÄBtrunk.2.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset3080192j
+length589824p*tÄÄBtrunk.3.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset3670016j
+length589824p*tÄÄBtrunk.3.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset4259840j
+length589824p*tÄÄBtrunk.4.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset4849664j
+length589824p*tÄÄBtrunk.4.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset5439488j
+length589824p*tÄÄBtrunk.5.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset6029312j
+length589824p*tÄÄBtrunk.5.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset6619136j
+length589824p*tÄÄBtrunk.6.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset7208960j
+length589824p*tÄÄBtrunk.6.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset7798784j
+length589824p*tÄÄBtrunk.7.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset8388608j
+length589824p*tÄÄBtrunk.7.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset8978432j
+length589824p*tÄÄBtrunk.8.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset9568256j
+length589824p*uÄÄBtrunk.8.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset10158080j
+length589824p*uÄÄBtrunk.9.conv1.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset10747904j
+length589824p*uÄÄBtrunk.9.conv2.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset11337728j
+length589824p*iÄÄ$Bfc.0.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset11927552j
+length4718592p*i"ÄBdiscard.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16646144j
+length34816p*fÄBclaim.weightj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16680960j
+length5120p*Bscalar_tensor_defaultJ    *Bval_243J(knŒ*iÄBstem.0.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16686080j
+length512p*pÄBtrunk.0.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16686592j
+length512p*pÄBtrunk.0.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16687104j
+length512p*pÄBtrunk.1.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16687616j
+length512p*pÄBtrunk.1.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16688128j
+length512p*pÄBtrunk.2.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16688640j
+length512p*pÄBtrunk.2.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16689152j
+length512p*pÄBtrunk.3.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16689664j
+length512p*pÄBtrunk.3.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16690176j
+length512p*pÄBtrunk.4.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16690688j
+length512p*pÄBtrunk.4.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16691200j
+length512p*pÄBtrunk.5.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16691712j
+length512p*pÄBtrunk.5.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16692224j
+length512p*pÄBtrunk.6.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16692736j
+length512p*pÄBtrunk.6.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16693248j
+length512p*pÄBtrunk.7.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16693760j
+length512p*pÄBtrunk.7.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16694272j
+length512p*pÄBtrunk.8.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16694784j
+length512p*pÄBtrunk.8.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16695296j
+length512p*pÄBtrunk.9.conv1.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16695808j
+length512p*pÄBtrunk.9.conv2.weight_biasj)
+locationhk_mahjong_agent_v8.onnx.dataj
+offset16696320j
+length512p*Bval_246Jˇˇˇˇˇˇˇˇ       *Bval_245JˇˇˇˇˇˇˇˇZR
+planes
+
+batch
+
+
+	"+
+!pkg.torch.onnx.original_node_nameplanesZV
+discard_mask
+
+batch
+""1
+!pkg.torch.onnx.original_node_namediscard_maskZR
+
+claim_mask
+
+batch
+"/
+!pkg.torch.onnx.original_node_name
+claim_maskbW
+discard_logits
+
+batch
+""0
+!pkg.torch.onnx.original_node_namemasked_fillbW
+claim_logits
+
+batch
+"2
+!pkg.torch.onnx.original_node_namemasked_fill_1bO
+expected_value
+	
+batch",
+!pkg.torch.onnx.original_node_namesqueezej
+	fc.0.bias
+	
+Äj
+discard.bias
+
+
+"j
+
+claim.bias
+
+
+j
+value.weight
+	
+
+Äj
+
+value.bias
+
+
+j(
+stem.0.weight
+
+Ä
+
+
+j0
+trunk.0.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.0.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.1.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.1.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.2.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.2.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.3.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.3.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.4.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.4.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.5.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.5.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.6.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.6.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.7.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.7.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.8.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.8.conv2.weight
+
+Ä
+Ä
+
+j0
+trunk.9.conv1.weight
+
+Ä
+Ä
+
+j0
+trunk.9.conv2.weight
+
+Ä
+Ä
+
+j
+fc.0.weight
+
+
+Ä
+Ä$j!
+discard.weight
+	
+"
+Äj
+claim.weight
+	
+
+ÄjT
+scalar_tensor_default
+ "3
+$pkg.onnxscript.optimizer.folded_from['val_241']jF
+val_243
+ "3
+$pkg.onnxscript.optimizer.folded_from['val_242']j!
+stem.0.weight_bias
+	
+Äj(
+trunk.0.conv1.weight_bias
+	
+Äj(
+trunk.0.conv2.weight_bias
+	
+Äj(
+trunk.1.conv1.weight_bias
+	
+Äj(
+trunk.1.conv2.weight_bias
+	
+Äj(
+trunk.2.conv1.weight_bias
+	
+Äj(
+trunk.2.conv2.weight_bias
+	
+Äj(
+trunk.3.conv1.weight_bias
+	
+Äj(
+trunk.3.conv2.weight_bias
+	
+Äj(
+trunk.4.conv1.weight_bias
+	
+Äj(
+trunk.4.conv2.weight_bias
+	
+Äj(
+trunk.5.conv1.weight_bias
+	
+Äj(
+trunk.5.conv2.weight_bias
+	
+Äj(
+trunk.6.conv1.weight_bias
+	
+Äj(
+trunk.6.conv2.weight_bias
+	
+Äj(
+trunk.7.conv1.weight_bias
+	
+Äj(
+trunk.7.conv2.weight_bias
+	
+Äj(
+trunk.8.conv1.weight_bias
+	
+Äj(
+trunk.8.conv2.weight_bias
+	
+Äj(
+trunk.9.conv1.weight_bias
+	
+Äj(
+trunk.9.conv2.weight_bias
+	
+Äj
+val_246
+
+
+j
+val_245
+
+
+j'
+getitem
+
+batch
+Ä
+
+	j*
+
+leaky_relu
+
+batch
+Ä
+
+	j)
+	getitem_3
+
+batch
+Ä
+
+	j,
+leaky_relu_1
+
+batch
+Ä
+
+	j)
+	getitem_6
+
+batch
+Ä
+
+	j%
+add_8
+
+batch
+Ä
+
+	j,
+leaky_relu_2
+
+batch
+Ä
+
+	j)
+	getitem_9
+
+batch
+Ä
+
+	j,
+leaky_relu_3
+
+batch
+Ä
+
+	j*
+
+getitem_12
+
+batch
+Ä
+
+	j%
+add_9
+
+batch
+Ä
+
+	j,
+leaky_relu_4
+
+batch
+Ä
+
+	j*
+
+getitem_15
+
+batch
+Ä
+
+	j,
+leaky_relu_5
+
+batch
+Ä
+
+	j*
+
+getitem_18
+
+batch
+Ä
+
+	j&
+add_10
+
+batch
+Ä
+
+	j,
+leaky_relu_6
+
+batch
+Ä
+
+	j*
+
+getitem_21
+
+batch
+Ä
+
+	j,
+leaky_relu_7
+
+batch
+Ä
+
+	j*
+
+getitem_24
+
+batch
+Ä
+
+	j&
+add_11
+
+batch
+Ä
+
+	j,
+leaky_relu_8
+
+batch
+Ä
+
+	j*
+
+getitem_27
+
+batch
+Ä
+
+	j,
+leaky_relu_9
+
+batch
+Ä
+
+	j*
+
+getitem_30
+
+batch
+Ä
+
+	j&
+add_12
+
+batch
+Ä
+
+	j-
+leaky_relu_10
+
+batch
+Ä
+
+	j*
+
+getitem_33
+
+batch
+Ä
+
+	j-
+leaky_relu_11
+
+batch
+Ä
+
+	j*
+
+getitem_36
+
+batch
+Ä
+
+	j&
+add_13
+
+batch
+Ä
+
+	j-
+leaky_relu_12
+
+batch
+Ä
+
+	j*
+
+getitem_39
+
+batch
+Ä
+
+	j-
+leaky_relu_13
+
+batch
+Ä
+
+	j*
+
+getitem_42
+
+batch
+Ä
+
+	j&
+add_14
+
+batch
+Ä
+
+	j-
+leaky_relu_14
+
+batch
+Ä
+
+	j*
+
+getitem_45
+
+batch
+Ä
+
+	j-
+leaky_relu_15
+
+batch
+Ä
+
+	j*
+
+getitem_48
+
+batch
+Ä
+
+	j&
+add_15
+
+batch
+Ä
+
+	j-
+leaky_relu_16
+
+batch
+Ä
+
+	j*
+
+getitem_51
+
+batch
+Ä
+
+	j-
+leaky_relu_17
+
+batch
+Ä
+
+	j*
+
+getitem_54
+
+batch
+Ä
+
+	j&
+add_16
+
+batch
+Ä
+
+	j-
+leaky_relu_18
+
+batch
+Ä
+
+	j*
+
+getitem_57
+
+batch
+Ä
+
+	j-
+leaky_relu_19
+
+batch
+Ä
+
+	j*
+
+getitem_60
+
+batch
+Ä
+
+	j&
+add_17
+
+batch
+Ä
+
+	j-
+leaky_relu_20
+
+batch
+Ä
+
+	j
+view
+
+batch
+Ä$j
+linear
+
+batch
+Äj%
+leaky_relu_21
+
+batch
+Äj
+linear_1
+
+batch
+"j
+le
+	
+batch
+"j
+linear_2
+
+batch
+j
+le_1
+	
+batch
+j
+linear_3
+
+batch
+B
+ 

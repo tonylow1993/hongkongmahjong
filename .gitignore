@@ -8,9 +8,24 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.venv
+azure_train/.venv
+azure_train/checkpoints
+__pycache__
 dist
 dist-ssr
 *.local
+# Models & Checkpoints
+models/hk*
+!models/hk_mahjong_agent_v7.onnx
+!models/hk_mahjong_agent_v7.onnx.data
+!models/hk_mahjong_agent_v8.onnx
+!models/hk_mahjong_agent_v8.onnx.data
+!models/hk_mahjong_agent.onnx
+!models/hk_mahjong_agent.onnx.data
+!checkpoints/hk_expert_beater_gae.pt.best.pt
+!checkpoints/hk_expert_beater_v8.pt.best.pt
+azure_connection/*
 
 # Editor directories and files
 .vscode/*

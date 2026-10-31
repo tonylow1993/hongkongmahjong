@@ -116,7 +116,7 @@ export function scoreClaim(state: GameState, playerId: number, opt: ClaimOption)
 
 export function allowSelfKong(state: GameState, playerId: number): boolean {
   const path = choosePath(state, playerId);
-  if (path === 'concealed' || path === 'fold') return false;
+  if (path === 'fold') return false;
   return state.wall.length > 8;
 }
 
