@@ -8,9 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.venv
+azure_train/.venv
+azure_train/checkpoints
+__pycache__
 dist
 dist-ssr
 *.local
+models/hk*
+azure_connection/*
 
 # Editor directories and files
 .vscode/*

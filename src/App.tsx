@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useGameStore } from './store/gameStore';
 import { ActionBar } from './ui/ActionBar';
+import { CoachOverlay } from './ui/CoachOverlay';
 import { MahjongTable } from './ui/MahjongTable';
 import { TrainingPanel } from './ui/TrainingPanel';
 import { WinModal } from './ui/WinModal';
@@ -20,8 +21,13 @@ export default function App() {
   const setShowTraining = useGameStore((s) => s.setShowTraining);
   const exportTraining = useGameStore((s) => s.exportTraining);
   const clearTraining = useGameStore((s) => s.clearTraining);
+  const aiLevel = useGameStore((s) => s.aiLevel);
+  const opponentMode = useGameStore((s) => s.opponentMode);
+  const setAILevel = useGameStore((s) => s.setAILevel);
+  const modeError = useGameStore((s) => s.modeError);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [coachOn, setCoachOn] = useState(false);
 
   const canInteract =
     state.phase === 'discard' && state.currentPlayer === 0 && !aiThinking;
@@ -45,8 +51,50 @@ export default function App() {
   return (
     <div className="app app--ref">
       <header className="game-hud game-hud--top">
-        <span className="game-hud__meta">起糊 3 番 · 二五半</span>
+        <span className="game-hud__meta">起糊 3 番 · 半辣上</span>
         <div className="game-hud__actions">
+          <div className="ai-level-group" role="group" aria-label="AI對手等級">
+            <span className="ai-level-group__label">AI對手：</span>
+            <button
+              type="button"
+              className={`btn btn--sm ${aiLevel === 'local' ? 'btn--primary' : 'btn--ghost'}`}
+              onClick={() => setAILevel('local')}
+              title="本地 AI：純前端 TypeScript 啟發式規則引擎，離線即玩、無網絡延遲"
+            >
+              本地 AI
+            </button>
+            <button
+              type="button"
+              className={`btn btn--sm ${aiLevel === 'level-1' ? 'btn--primary' : 'btn--ghost'}`}
+              onClick={() => setAILevel('level-1')}
+              title="初級：神經網絡（輕鬆探索模式）"
+            >
+              初級
+            </button>
+            <button
+              type="button"
+              className={`btn btn--sm ${aiLevel === 'level-2' ? 'btn--primary' : 'btn--ghost'}`}
+              onClick={() => setAILevel('level-2')}
+              title="中級：神經網絡（均衡探索對弈）"
+            >
+              中級
+            </button>
+            <button
+              type="button"
+              className={`btn btn--sm ${aiLevel === 'level-3' ? 'btn--primary' : 'btn--ghost'}`}
+              onClick={() => setAILevel('level-3')}
+              title="高級：專家神經網絡（嚴密三番防守算路）"
+            >
+              高級
+            </button>
+          </div>
+          <button
+            type="button"
+            className={`btn btn--sm ${coachOn ? 'btn--primary' : 'btn--ghost'}`}
+            onClick={() => setCoachOn((on) => !on)}
+          >
+            AI 戰術教練
+          </button>
           <button type="button" className="btn btn--ghost btn--sm" onClick={() => setShowTraining(true)}>
             設定
           </button>
@@ -88,13 +136,31 @@ export default function App() {
       />
 
       <footer className="game-hud game-hud--bottom">
-        <span>香港麻將</span>
-        <span className="game-hud__hint">點選手牌後按「出牌」</span>
+        <span>香港麻將 · 三番起糊</span>
+        <span className="game-hud__hint">
+          {modeError ?? '點選手牌後按「出牌」'}
+          {` · 電腦對手：${
+            aiLevel === 'local'
+              ? '本地 AI（純規則）'
+              : aiLevel === 'level-1'
+                ? '初級（神經網絡探索型）'
+                : aiLevel === 'level-2'
+                  ? '中級（神經網絡 v2）'
+                  : '高級（專家 AI v4）'
+          }`}
+        </span>
       </footer>
 
+      <CoachOverlay
+        open={coachOn}
+        state={state}
+        canAsk={canInteract || humanClaims != null}
+      />
       <WinModal state={state} onNextRound={nextRound} onResetTable={newGame} />
       <TrainingPanel
         open={showTraining}
+        aiLevel={aiLevel}
+        opponentMode={opponentMode}
         sampleCount={sampleCount}
         onClose={() => setShowTraining(false)}
         onExport={exportTraining}

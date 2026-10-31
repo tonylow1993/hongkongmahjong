@@ -30,17 +30,21 @@ export interface TableSession {
   dealerStreak: number;
 }
 
-const FRESH_SESSION: TableSession = {
-  scores: [INITIAL_TABLE_SCORE, INITIAL_TABLE_SCORE, INITIAL_TABLE_SCORE, INITIAL_TABLE_SCORE],
-  dealer: 0,
-  prevailingWind: 0,
-  roundWindCount: 1,
-  dealerStreak: 0,
-};
+export function createFreshSession(): TableSession {
+  // 開局隨機起莊（0:你、1:下家、2:對家、3:上家）
+  const randomDealer = Math.floor(Math.random() * 4);
+  return {
+    scores: [INITIAL_TABLE_SCORE, INITIAL_TABLE_SCORE, INITIAL_TABLE_SCORE, INITIAL_TABLE_SCORE],
+    dealer: randomDealer,
+    prevailingWind: 0,
+    roundWindCount: 1,
+    dealerStreak: 0,
+  };
+}
 
-/** 開台（分數歸零） */
+/** 開台（隨機擲骰起莊，分數設為底分 1000） */
 export function createNewGame(config: Partial<GameConfig> = {}): GameState {
-  return dealRound(config, FRESH_SESSION);
+  return dealRound(config, createFreshSession());
 }
 
 /** 下一局：保留分數，按連莊／過莊、轉圈風 */
@@ -124,7 +128,7 @@ function dealRound(config: Partial<GameConfig>, session: TableSession): GameStat
     claimOptions: {},
     pendingClaims: {},
     winInfo: null,
-    message: `圈風${WIND_LABELS[prevailingWind]} · ${players[dealer].name}做莊${streakNote} · 三番起糊 · 二五半`,
+    message: `圈風${WIND_LABELS[prevailingWind]} · ${players[dealer].name}做莊${streakNote} · 三番起糊 · 半辣上`,
     turn: 0,
     drawnTile: null,
   };
@@ -138,17 +142,17 @@ function applySettlement(state: GameState, info: WinInfo): GameState {
     ...info,
     tier: settled.tier,
     baseLa: settled.baseLa,
+    basePoints: settled.basePoints,
     scoreDeltas: settled.deltas,
     settlementNotes: settled.lines.map(
-      (l) => `${state.players[l.playerId].name}${l.note}${l.delta}`,
+      (l) => `${state.players[l.playerId].name}${l.note}${l.delta > 0 ? `+${l.delta}` : l.delta}`,
     ),
   };
   for (let i = 0; i < 4; i++) {
     state.players[i].score += settled.deltas[i];
   }
   state.winInfo = enriched;
-  const tierLabel = `${settled.tier}（${settled.baseLa}辣）`;
-  state.message = `${state.players[info.winner].name}${info.isSelfDraw ? '自摸' : '糊牌'}！${info.fan}番 · ${tierLabel}`;
+  state.message = `${state.players[info.winner].name}${info.isSelfDraw ? '自摸' : '食糊'}！${info.fan}番 · ${settled.tier}`;
   return state;
 }
 

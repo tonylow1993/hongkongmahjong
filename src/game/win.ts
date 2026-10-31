@@ -19,11 +19,10 @@ export function canWinStandard(hand: Tile[], melds: Meld[], winningTile: Tile): 
 
 export function isWinningHand(hand: Tile[], melds: Meld[], winningTile: Tile): boolean {
   if (isThirteenOrphans([...hand, winningTile], melds)) return true;
-  if (isSevenPairs([...hand, winningTile], melds)) return true;
   return canWinStandard(hand, melds, winningTile) !== null;
 }
 
-/** 七對子（香港常見變體；門清無副露） */
+/** 七對子（正宗香港清章麻雀不承認七對子，香港牌嚴格要求四面子一雀頭；此處僅作牌型判定保留） */
 export function isSevenPairs(tiles: Tile[], melds: Meld[]): boolean {
   if (melds.length > 0 || tiles.length !== 14) return false;
   const counts = countByKey(tiles);
@@ -200,6 +199,46 @@ export function findPromotedKongs(hand: Tile[], melds: Meld[]): Tile[][] {
     if (match) out.push([match, ...meld.tiles]);
   }
   return out;
+}
+
+/** 四組順子。雀頭可以是字牌或風牌。碰、槓、暗槓都不是平胡。花牌不在此判斷。 */
+export function isPingHu(hand: Tile[], melds: Meld[], winningTile: Tile): boolean {
+  if (melds.some((m) => m.kind !== 'chow')) return false;
+  const needed = 4 - melds.length;
+  const tiles = [...hand, winningTile];
+  if (tiles.length !== needed * 3 + 2) return false;
+
+  const counts = toCountMap(tiles);
+  for (const key of [...counts.keys()]) {
+    if ((counts.get(key) ?? 0) < 2) continue;
+    take(counts, key, 2);
+    const ok = searchChowsOnly(counts, needed);
+    putBack(counts, key, 2);
+    if (ok) return true;
+  }
+  return false;
+}
+
+function searchChowsOnly(counts: Map<string, number>, remaining: number): boolean {
+  if (remaining === 0) return totalCount(counts) === 0;
+  const nextKey = firstNonZero(counts);
+  if (!nextKey) return false;
+  const [suit, valStr] = nextKey.split('-');
+  const val = Number(valStr);
+  if ((suit === 'man' || suit === 'pin' || suit === 'sou') && val <= 7) {
+    const k2 = `${suit}-${val + 1}`;
+    const k3 = `${suit}-${val + 2}`;
+    if ((counts.get(nextKey) ?? 0) >= 1 && (counts.get(k2) ?? 0) >= 1 && (counts.get(k3) ?? 0) >= 1) {
+      take(counts, nextKey, 1);
+      take(counts, k2, 1);
+      take(counts, k3, 1);
+      if (searchChowsOnly(counts, remaining - 1)) return true;
+      putBack(counts, nextKey, 1);
+      putBack(counts, k2, 1);
+      putBack(counts, k3, 1);
+    }
+  }
+  return false;
 }
 
 export function allMeldsArePongs(melds: Meld[], shape: WinShape | null): boolean {

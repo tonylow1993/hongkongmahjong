@@ -5,7 +5,7 @@ import {
   allMeldsArePongs,
   canWinStandard,
   getHandSuitProfile,
-  isSevenPairs,
+  isPingHu,
   isThirteenOrphans,
   type WinShape,
 } from './win';
@@ -34,19 +34,49 @@ export function calculateFan(ctx: ScoreContext): { fan: number; details: FanDeta
     return { fan: sum(details), details };
   }
 
-  if (isSevenPairs([...hand, winningTile], melds)) {
-    details.push({ name: '七對子', fan: 4 });
-    addCommon(details, player, isSelfDraw, prevailingWind);
-    addFlushFans(details, hand, melds, winningTile);
-    return { fan: sum(details), details };
-  }
-
   const shape = canWinStandard(hand, melds, winningTile);
   if (!shape) return { fan: 0, details: [] };
 
   // —— 牌型番 ——
-  if (allMeldsArePongs(melds, shape)) {
+  const allTiles: Tile[] = [
+    ...hand,
+    winningTile,
+    ...melds.flatMap((m) => m.tiles),
+  ];
+  const allHonors = allTiles.every((t) => t.suit === 'wind' || t.suit === 'dragon');
+  const allMeldsPongs = allMeldsArePongs(melds, shape);
+
+  if (allHonors) {
+    details.push({ name: '字一色', fan: 10 });
+    addCommon(details, player, isSelfDraw, prevailingWind);
+    if (player.flowers.length === 0) details.push({ name: '無花', fan: 1 });
+    else addFlowerFans(details, player);
+    return { fan: sum(details), details };
+  }
+
+  const allTerminals = allTiles.every(
+    (t) => (t.suit === 'man' || t.suit === 'pin' || t.suit === 'sou') && (t.value === 1 || t.value === 9),
+  );
+  if (allTerminals && allMeldsPongs) {
+    details.push({ name: '清么九', fan: 10 });
+    addCommon(details, player, isSelfDraw, prevailingWind);
+    if (player.flowers.length === 0) details.push({ name: '無花', fan: 1 });
+    else addFlowerFans(details, player);
+    return { fan: sum(details), details };
+  }
+
+  const allTerminalsOrHonors = allTiles.every(
+    (t) =>
+      t.suit === 'wind' ||
+      t.suit === 'dragon' ||
+      ((t.suit === 'man' || t.suit === 'pin' || t.suit === 'sou') && (t.value === 1 || t.value === 9)),
+  );
+  if (allTerminalsOrHonors && allMeldsPongs) {
+    details.push({ name: '混么九', fan: 4 });
+  } else if (allMeldsPongs) {
     details.push({ name: '對對糊', fan: 3 });
+  } else if (isPingHu(hand, melds, winningTile)) {
+    details.push({ name: '平胡', fan: 1 });
   }
 
   addFlushFans(details, hand, melds, winningTile);
@@ -70,7 +100,9 @@ function addCommon(
   _prevailingWind: Wind,
 ): void {
   if (isSelfDraw) details.push({ name: '自摸', fan: 1 });
-  if (player.melds.length === 0) details.push({ name: '門清', fan: 1 });
+  // 暗槓不算副露（不露牌），保留門前清。只有吃、碰、明槓才破門清。
+  const hasOpenMelds = player.melds.some((m) => m.kind !== 'concealedKong');
+  if (!hasOpenMelds) details.push({ name: '門清', fan: 1 });
 }
 
 function addFlushFans(
@@ -104,40 +136,67 @@ function addHonorFans(
 
   let dragonPongs = 0;
   let windPongs = 0;
-  const windValues = new Set<number>();
+  const dragonNames: string[] = [];
+  let seatWindPong = false;
+  let roundWindPong = false;
 
   for (const m of allMelds) {
     if (!sameTile(m[0], m[1]) || !sameTile(m[1], m[2])) continue;
     const t = m[0];
     if (t.suit === 'dragon') {
       dragonPongs++;
-      details.push({ name: `箭牌（${['中', '發', '白'][t.value - 1]}）`, fan: 1 });
+      dragonNames.push(['中', '發', '白'][t.value - 1]);
     }
     if (t.suit === 'wind') {
       windPongs++;
-      windValues.add(t.value);
-      if (t.value === seatWind) details.push({ name: `位風（${WIND_LABELS[t.value - 1]}）`, fan: 1 });
-      if (t.value === roundWind) details.push({ name: `圈風（${WIND_LABELS[t.value - 1]}）`, fan: 1 });
+      if (t.value === seatWind) seatWindPong = true;
+      if (t.value === roundWind) roundWindPong = true;
     }
   }
 
-  // 雀頭亦計小三元／小四喜判斷
   const pair = shape.pair[0];
-  if (pair.suit === 'dragon') {
-    // 小三元：兩組箭刻＋一組箭眼
-    if (dragonPongs === 2) details.push({ name: '小三元', fan: 5 });
-  }
-  if (dragonPongs === 3) details.push({ name: '大三元', fan: 8 });
 
-  if (windPongs === 3 && pair.suit === 'wind') {
-    details.push({ name: '小四喜', fan: 5 });
+  // 箭牌：大三元(8番) / 小三元(5番) / 單刻(1番)
+  if (dragonPongs === 3) {
+    details.push({ name: '大三元', fan: 8 });
+  } else if (dragonPongs === 2 && pair.suit === 'dragon') {
+    details.push({ name: '小三元', fan: 5 });
+  } else {
+    for (const name of dragonNames) {
+      details.push({ name: `箭牌（${name}）`, fan: 1 });
+    }
   }
-  if (windPongs === 4) details.push({ name: '大四喜', fan: 10 });
+
+  // 風牌：大四喜(10番) / 小四喜(5番) / 門風(1番) / 圈風(1番)
+  if (windPongs === 4) {
+    details.push({ name: '大四喜', fan: 10 });
+  } else if (windPongs === 3 && pair.suit === 'wind') {
+    details.push({ name: '小四喜', fan: 5 });
+    if (seatWindPong) details.push({ name: `位風（${WIND_LABELS[seatWind - 1]}）`, fan: 1 });
+    if (roundWindPong) details.push({ name: `圈風（${WIND_LABELS[roundWind - 1]}）`, fan: 1 });
+  } else {
+    if (seatWindPong) details.push({ name: `位風（${WIND_LABELS[seatWind - 1]}）`, fan: 1 });
+    if (roundWindPong) details.push({ name: `圈風（${WIND_LABELS[roundWind - 1]}）`, fan: 1 });
+  }
 
   void winningTile;
 }
 
 function addFlowerFans(details: FanDetail[], player: PlayerState): void {
+  const flowerVals = new Set(player.flowers.map((f) => f.value));
+  if (flowerVals.size === 8) {
+    details.push({ name: '八仙過海（八花齊）', fan: 8 });
+    return;
+  }
+  const hasSeasonSet = [1, 2, 3, 4].every((v) => flowerVals.has(v));
+  const hasPlantSet = [5, 6, 7, 8].every((v) => flowerVals.has(v));
+  if (hasSeasonSet) {
+    details.push({ name: '一台花（春夏秋冬）', fan: 2 });
+  }
+  if (hasPlantSet) {
+    details.push({ name: '一台花（梅蘭菊竹）', fan: 2 });
+  }
+
   const own = player.flowers.filter((f) => isSeatFlower(f, player.seatWind));
   for (const f of own) {
     details.push({ name: `正花（${FLOWER_LABELS[f.value - 1]}）`, fan: 1 });
@@ -179,7 +238,6 @@ export function checkWinEligible(
   const hand = hasInHand ? handWithout : player.hand;
 
   if (!canWinStandard(hand, player.melds, tile) &&
-      !isSevenPairs([...hand, tile], player.melds) &&
       !isThirteenOrphans([...hand, tile], player.melds)) {
     return null;
   }

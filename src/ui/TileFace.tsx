@@ -403,18 +403,228 @@ function DragonFace({ value }: { value: number }) {
 }
 
 function FlowerFace({ value }: { value: number }) {
-  const names = ['春', '夏', '秋', '冬', '梅', '蘭', '菊', '竹'];
-  const colors = ['#3aaa6a', '#e07a2f', '#d4a017', '#4a7eb5', '#d31c2b', '#2f9e6b', '#c45a9a', '#3d8f4a'];
-  const c = colors[value - 1] ?? '#d31c2b';
+  // 香港傳統花牌：
+  // 1-4: 四季牌（春、夏、秋、冬）- 紅字紅標
+  // 5-8: 四君子（梅、蘭、菊、竹）- 藍/綠字標（對應座風 1東/梅 2南/蘭 3西/菊 4北/竹）
+  const isSeason = value <= 4;
+  const numIndex = isSeason ? value : value - 4; // 1, 2, 3, 4
+  const name = ['春', '夏', '秋', '冬', '梅', '蘭', '菊', '竹'][value - 1] ?? '花';
+
+  // 顏色配置：四季為硃砂紅，四君子為群青藍 / 碧綠
+  const primaryColor = isSeason ? RED : (value === 8 ? GREEN : BLUE);
+  const badgeColor = isSeason ? RED : BLUE;
+
   return (
     <g>
-      <circle cx="30" cy="34" r="12" fill={c} />
-      <circle cx="30" cy="34" r="5" fill="#ffe08a" />
-      {[0, 60, 120, 180, 240, 300].map((deg) => (
-        <ellipse key={deg} cx="30" cy="18" rx="4" ry="8" fill={c} transform={`rotate(${deg} 30 34)`} opacity="0.9" />
-      ))}
-      <text x="30" y="74" textAnchor="middle" fontSize="14" fontFamily="serif" fontWeight="700" fill={c}>
-        {names[value - 1]}
+      {/* 傳統外緣暗框 */}
+      <rect
+        x="3"
+        y="3"
+        width="54"
+        height="78"
+        rx="2.5"
+        fill="none"
+        stroke={primaryColor}
+        strokeWidth="0.6"
+        strokeOpacity="0.35"
+      />
+
+      {/* 左上角數字角標（1~4） */}
+      <rect
+        x="5"
+        y="5"
+        width="11"
+        height="12"
+        rx="1.5"
+        fill={badgeColor}
+        opacity="0.12"
+      />
+      <text
+        x="10.5"
+        y="14.5"
+        textAnchor="middle"
+        fontSize="10"
+        fontFamily="'Arial', 'Helvetica', sans-serif"
+        fontWeight="900"
+        fill={badgeColor}
+      >
+        {numIndex}
+      </text>
+
+      {/* 中間傳統精美插畫 */}
+      {value === 1 && (
+        /* 春：春燕展翅與桃紅柳綠 */
+        <g transform="translate(0, -2)">
+          {/* 柳枝與春枝 */}
+          <path d="M14 26 C 24 22, 36 28, 46 22" stroke="#2e7d32" strokeWidth="1.2" fill="none" />
+          <circle cx="20" cy="24" r="1.5" fill="#e91e63" />
+          <circle cx="34" cy="26" r="1.8" fill="#e91e63" />
+          <circle cx="44" cy="22" r="1.5" fill="#e91e63" />
+          {/* 春燕剪尾 */}
+          <path
+            d="M24 38 Q 30 33, 37 36 Q 44 32, 46 38 Q 38 41, 35 46 Q 32 40, 24 38 Z"
+            fill="#263238"
+          />
+          <path d="M35 46 L 31 54 L 35 50 L 39 54 Z" fill="#263238" />
+          <circle cx="26" cy="37" r="1" fill="#fff" />
+        </g>
+      )}
+
+      {value === 2 && (
+        /* 夏：荷塘荷花與蓮蓬水紋 */
+        <g transform="translate(0, -2)">
+          {/* 水波 */}
+          <path d="M16 48 C 22 46, 28 50, 34 48 C 40 46, 44 48, 46 48" stroke="#0288d1" strokeWidth="1" fill="none" opacity="0.6" />
+          {/* 荷葉 */}
+          <ellipse cx="22" cy="46" rx="8" ry="3.5" fill="#2e7d32" opacity="0.85" />
+          {/* 荷花花瓣 */}
+          <path d="M30 46 C 24 38, 22 30, 30 24 C 38 30, 36 38, 30 46 Z" fill="#e91e63" />
+          <path d="M30 46 C 20 40, 18 34, 25 28 C 28 36, 29 42, 30 46 Z" fill="#f06292" opacity="0.9" />
+          <path d="M30 46 C 40 40, 42 34, 35 28 C 32 36, 31 42, 30 46 Z" fill="#f06292" opacity="0.9" />
+          <circle cx="30" cy="30" r="2.2" fill="#fbc02d" />
+        </g>
+      )}
+
+      {value === 3 && (
+        /* 秋：金楓落葉與明月中天 */
+        <g transform="translate(0, -2)">
+          {/* 秋月 */}
+          <circle cx="38" cy="26" r="9" fill="#fff9c4" stroke="#fbc02d" strokeWidth="0.8" opacity="0.75" />
+          {/* 楓葉 */}
+          <g transform="translate(26, 36) scale(0.9)">
+            <path
+              d="M 0,-14 L 3,-5 L 10,-8 L 6,-1 L 13,3 L 5,4 L 7,12 L 1,7 L 0,14 L -1,7 L -7,12 L -5,4 L -13,3 L -6,-1 L -10,-8 L -3,-5 Z"
+              fill="#e65100"
+            />
+            <line x1="0" y1="12" x2="0" y2="18" stroke="#bf360c" strokeWidth="1.2" />
+          </g>
+        </g>
+      )}
+
+      {value === 4 && (
+        /* 冬：寒冬瑞雪與青松 */
+        <g transform="translate(0, -2)">
+          {/* 松針枝幹 */}
+          <path d="M22 48 L 30 36 L 38 48" stroke="#1b5e20" strokeWidth="1.6" strokeLinecap="round" />
+          <path d="M25 40 L 30 30 L 35 40" stroke="#1b5e20" strokeWidth="1.6" strokeLinecap="round" />
+          <path d="M30 30 L 30 50" stroke="#4e342e" strokeWidth="1.8" />
+          {/* 雪花結晶 */}
+          <g transform="translate(38, 24) scale(0.7)">
+            <line x1="-8" y1="0" x2="8" y2="0" stroke="#0288d1" strokeWidth="1.2" />
+            <line x1="0" y1="-8" x2="0" y2="8" stroke="#0288d1" strokeWidth="1.2" />
+            <line x1="-6" y1="-6" x2="6" y2="6" stroke="#0288d1" strokeWidth="1.2" />
+            <line x1="-6" y1="6" x2="6" y2="-6" stroke="#0288d1" strokeWidth="1.2" />
+            <circle cx="0" cy="0" r="1.5" fill="#0288d1" />
+          </g>
+        </g>
+      )}
+
+      {value === 5 && (
+        /* 梅：五瓣老樁紅梅 */
+        <g transform="translate(0, -2)">
+          {/* 老梅乾枝 */}
+          <path d="M16 48 Q 24 40, 26 34 T 44 24" stroke="#4e342e" strokeWidth="2" fill="none" strokeLinecap="round" />
+          <path d="M26 34 Q 30 28, 28 22" stroke="#4e342e" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+          {/* 五瓣紅梅花朵 */}
+          <g transform="translate(36, 26)">
+            {[0, 72, 144, 216, 288].map((deg) => (
+              <circle
+                key={deg}
+                cx={Math.sin((deg * Math.PI) / 180) * 5.5}
+                cy={-Math.cos((deg * Math.PI) / 180) * 5.5}
+                r="4.2"
+                fill="#d32f2f"
+              />
+            ))}
+            <circle cx="0" cy="0" r="3.2" fill="#ffeb3b" />
+            <circle cx="0" cy="0" r="1.2" fill="#b71c1c" />
+          </g>
+          {/* 花蕾 */}
+          <circle cx="28" cy="20" r="2.4" fill="#c2185b" />
+          <circle cx="18" cy="38" r="2" fill="#c2185b" />
+        </g>
+      )}
+
+      {value === 6 && (
+        /* 蘭：幽谷王者香 幽蘭飄逸 */
+        <g transform="translate(0, -2)">
+          {/* 蘭葉 */}
+          <path d="M16 50 Q 20 28, 38 22 Q 32 36, 24 50" fill="#2e7d32" />
+          <path d="M22 50 Q 28 32, 44 32 Q 34 42, 28 50" fill="#388e3c" opacity="0.85" />
+          {/* 蘭花花苞與花冠 */}
+          <g transform="translate(32, 26)">
+            <ellipse cx="-3" cy="-2" rx="4.5" ry="2.5" fill="#7b1fa2" transform="rotate(-30)" />
+            <ellipse cx="3" cy="-2" rx="4.5" ry="2.5" fill="#7b1fa2" transform="rotate(30)" />
+            <ellipse cx="0" cy="4" rx="4" ry="3" fill="#ab47bc" />
+            <circle cx="0" cy="1" r="1.5" fill="#ffeb3b" />
+          </g>
+        </g>
+      )}
+
+      {value === 7 && (
+        /* 菊：重陽金菊盛開 */
+        <g transform="translate(0, -2)">
+          <g transform="translate(30, 34)">
+            {/* 多層放射花瓣 */}
+            {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
+              <ellipse
+                key={deg}
+                cx="0"
+                cy="-9"
+                rx="2.6"
+                ry="5"
+                fill="#f57f17"
+                transform={`rotate(${deg})`}
+              />
+            ))}
+            {[15, 45, 75, 105, 135, 165, 195, 225, 255, 285, 315, 345].map((deg) => (
+              <ellipse
+                key={deg}
+                cx="0"
+                cy="-6.5"
+                rx="2"
+                ry="4"
+                fill="#fbc02d"
+                transform={`rotate(${deg})`}
+              />
+            ))}
+            <circle cx="0" cy="0" r="3.5" fill="#d84315" />
+          </g>
+        </g>
+      )}
+
+      {value === 8 && (
+        /* 竹：節節高升 翠竹青青 */
+        <g transform="translate(0, -2)">
+          {/* 竹竿本體 */}
+          <g transform="translate(26, 16)">
+            <rect x="0" y="2" width="4" height="12" rx="0.8" fill="#2e7d32" />
+            <line x1="-0.8" y1="2" x2="4.8" y2="2" stroke="#1b5e20" strokeWidth="1.2" />
+            <rect x="0" y="16" width="4" height="13" rx="0.8" fill="#2e7d32" />
+            <line x1="-0.8" y1="16" x2="4.8" y2="16" stroke="#1b5e20" strokeWidth="1.2" />
+            <rect x="0" y="31" width="4" height="13" rx="0.8" fill="#2e7d32" />
+            <line x1="-0.8" y1="31" x2="4.8" y2="31" stroke="#1b5e20" strokeWidth="1.2" />
+          </g>
+          {/* 竹葉群 */}
+          <path d="M28 20 Q 38 16, 44 20 Q 36 22, 28 20" fill="#388e3c" />
+          <path d="M28 21 Q 40 24, 43 30 Q 34 26, 28 21" fill="#43a047" />
+          <path d="M26 34 Q 16 30, 12 35 Q 20 37, 26 34" fill="#388e3c" />
+          <path d="M26 35 Q 15 38, 14 45 Q 22 41, 26 35" fill="#43a047" />
+        </g>
+      )}
+
+      {/* 底部正宗楷體名號 */}
+      <text
+        x="30"
+        y="73"
+        textAnchor="middle"
+        fontSize="17"
+        fontFamily="'Noto Serif TC', 'Songti SC', 'SimSun', 'STSong', serif"
+        fontWeight="800"
+        fill={primaryColor}
+        letterSpacing="1"
+      >
+        {name}
       </text>
     </g>
   );

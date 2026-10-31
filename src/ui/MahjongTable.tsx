@@ -17,6 +17,7 @@ export function MahjongTable({
   onSelectTile,
   canInteract,
 }: Props) {
+  const isEnded = state.phase === 'ended';
   const humanTurn = state.phase === 'discard' && state.currentPlayer === 0;
   const humanDrawn = humanTurn && state.drawnTile ? state.drawnTile : null;
 
@@ -33,7 +34,7 @@ export function MahjongTable({
           isDealer={state.dealer === 2}
           isCurrent={state.currentPlayer === 2}
         />
-        <SeatRail player={state.players[2]} side="top" showHand={false} />
+        <SeatRail player={state.players[2]} side="top" showHand={isEnded} />
       </div>
 
       <div className="mj-table__mid">
@@ -44,7 +45,7 @@ export function MahjongTable({
             isDealer={state.dealer === 3}
             isCurrent={state.currentPlayer === 3}
           />
-          <SeatRail player={state.players[3]} side="left" showHand={false} />
+          <SeatRail player={state.players[3]} side="left" showHand={isEnded} />
         </div>
 
         <TableCenter state={state} />
@@ -56,7 +57,7 @@ export function MahjongTable({
             isDealer={state.dealer === 1}
             isCurrent={state.currentPlayer === 1}
           />
-          <SeatRail player={state.players[1]} side="right" showHand={false} />
+          <SeatRail player={state.players[1]} side="right" showHand={isEnded} />
         </div>
       </div>
 
