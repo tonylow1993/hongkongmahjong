@@ -1,6 +1,7 @@
 import type { GameState, Tile } from '../game/types';
 import { WIND_LABELS } from '../game/types';
 import { TileView } from './TileView';
+import { TileWall } from './TileWall';
 
 interface Props {
   state: GameState;
@@ -82,6 +83,12 @@ export function TableCenter({ state, mySeat = 0 }: Props) {
 
   return (
     <div className="arena">
+      {/* 牌山 / 牌疊：四周立體牌山，每摸一張少一張，絕不遮擋任何牌 */}
+      <TileWall remainingTiles={state.wall.length} side="top" maxStacks={14} />
+      <TileWall remainingTiles={state.wall.length} side="left" maxStacks={10} />
+      <TileWall remainingTiles={state.wall.length} side="right" maxStacks={10} />
+      <TileWall remainingTiles={state.wall.length} side="bottom" maxStacks={14} />
+
       <River
         tiles={pTop.discards}
         side="top"

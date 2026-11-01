@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGameStore } from './store/gameStore';
 import { ActionBar } from './ui/ActionBar';
 import { CoachOverlay } from './ui/CoachOverlay';
@@ -8,6 +8,7 @@ import { WinModal } from './ui/WinModal';
 import { onlineClient } from './online/onlineClient';
 import { LobbyLanding } from './online/LobbyLanding';
 import { RoomLockedPage } from './online/RoomLockedPage';
+import { soundManager } from './audio/soundManager';
 import type { RoomState } from '../server/types';
 import './App.css';
 import './ref-layout.css';
@@ -32,6 +33,8 @@ export default function App() {
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [coachOn, setCoachOn] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => soundManager.isMuted());
+  const prevStateRef = useRef<any>(null);
 
   // Online Multiplayer State
   const [isOnline, setIsOnline] = useState(false);
@@ -74,6 +77,68 @@ export default function App() {
     };
   }, []);
 
+  const state = isOnline && onlineGameState ? onlineGameState : localState;
+  const activeSeat = isOnline && yourSeat !== null ? yourSeat : 0;
+
+  useEffect(() => {
+    if (!state) return;
+    const prev = prevStateRef.current;
+    prevStateRef.current = state;
+
+    if (!prev) return;
+
+    // 1. 食糊 / 自摸聲
+    if (state.phase === 'ended' && prev.phase !== 'ended') {
+      if (state.winInfo?.isSelfDraw) {
+        soundManager.playZimo();
+      } else if (state.winInfo) {
+        soundManager.playWin();
+      }
+      return;
+    }
+
+    // 2. 出牌聲 (lastDiscard 變更)
+    if (state.lastDiscard && state.lastDiscard.id !== prev.lastDiscard?.id) {
+      soundManager.playTileDiscard();
+      return;
+    }
+
+    // 3. 摸牌聲 (drawnTile 摸入)
+    if (state.drawnTile && state.drawnTile.id !== prev.drawnTile?.id) {
+      soundManager.playTileDraw();
+      return;
+    }
+
+    // 4. 副露聲 (吃碰槓數量變更)
+    const prevMeldCount = prev.players.reduce((sum: number, p: any) => sum + p.melds.length, 0);
+    const currMeldCount = state.players.reduce((sum: number, p: any) => sum + p.melds.length, 0);
+    if (currMeldCount > prevMeldCount) {
+      let latestKind = 'pong';
+      for (const p of state.players) {
+        if (p.melds.length > 0) {
+          const m = p.melds[p.melds.length - 1];
+          latestKind = m.kind;
+        }
+      }
+      if (latestKind === 'chow') {
+        soundManager.playChow();
+      } else if (latestKind === 'kong' || latestKind === 'concealedKong') {
+        soundManager.playKong();
+      } else {
+        soundManager.playPong();
+      }
+      return;
+    }
+
+    // 5. 補花聲
+    const prevFlowerCount = prev.players.reduce((sum: number, p: any) => sum + p.flowers.length, 0);
+    const currFlowerCount = state.players.reduce((sum: number, p: any) => sum + p.flowers.length, 0);
+    if (currFlowerCount > prevFlowerCount) {
+      soundManager.playFlower();
+      return;
+    }
+  }, [state]);
+
   const toggleOnline = () => {
     if (!isOnline) {
       setIsOnline(true);
@@ -85,9 +150,6 @@ export default function App() {
       setYourSeat(null);
     }
   };
-
-  const state = isOnline && onlineGameState ? onlineGameState : localState;
-  const activeSeat = isOnline && yourSeat !== null ? yourSeat : 0;
 
   const canInteract =
     state.phase === 'discard' &&
@@ -218,6 +280,14 @@ export default function App() {
           </div>
           <button
             type="button"
+            className={`btn btn--sm ${isMuted ? 'btn--ghost' : 'btn--accent'}`}
+            onClick={() => setIsMuted(soundManager.toggleMute())}
+            title={isMuted ? '點擊開啟麻將音效' : '點擊靜音'}
+          >
+            {isMuted ? '🔇 靜音' : '🔊 音效'}
+          </button>
+          <button
+            type="button"
             className={`btn btn--sm ${isOnline ? 'btn--primary' : 'btn--ghost'}`}
             onClick={toggleOnline}
             title={isOnline ? '切換為單機模式' : '切換為線上多人對弈模式'}
@@ -262,7 +332,10 @@ export default function App() {
         <MahjongTable
           state={state}
           selectedId={selectedId}
-          onSelectTile={setSelectedId}
+          onSelectTile={(id) => {
+            setSelectedId(id);
+            soundManager.playTileSelect();
+          }}
           canInteract={canInteract}
           mySeat={activeSeat}
         />
