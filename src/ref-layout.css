@@ -493,43 +493,43 @@
 }
 
 .river--top {
-  top: 20px;
+  top: 6px;
   left: 8%;
   right: 8%;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  max-height: 30%;
+  max-height: 32%;
 }
 
 .river--bottom {
-  bottom: 20px;
+  bottom: 6px;
   left: 8%;
   right: 8%;
   flex-direction: column-reverse;
   align-items: center;
   justify-content: flex-end;
-  max-height: 30%;
+  max-height: 32%;
 }
 
 .river--left {
-  left: 20px;
+  left: 6px;
   top: 10%;
   bottom: 10%;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  max-width: 24%;
+  max-width: 25%;
 }
 
 .river--right {
-  right: 20px;
+  right: 6px;
   top: 10%;
   bottom: 10%;
   flex-direction: row-reverse;
   align-items: center;
   justify-content: flex-end;
-  max-width: 24%;
+  max-width: 25%;
 }
 
 /* —— 牌疊 / 牌山 (Tile Wall) —— */
@@ -542,9 +542,9 @@
 }
 
 .tile-wall--top {
-  top: 1px;
-  left: 14%;
-  right: 14%;
+  top: -14px;
+  left: 8%;
+  right: 8%;
   height: 15px;
   flex-direction: row;
   justify-content: center;
@@ -552,9 +552,9 @@
 }
 
 .tile-wall--bottom {
-  bottom: 1px;
-  left: 14%;
-  right: 14%;
+  bottom: -14px;
+  left: 8%;
+  right: 8%;
   height: 15px;
   flex-direction: row;
   justify-content: center;
@@ -562,9 +562,9 @@
 }
 
 .tile-wall--left {
-  left: 1px;
-  top: 14%;
-  bottom: 14%;
+  left: -14px;
+  top: 8%;
+  bottom: 8%;
   width: 15px;
   flex-direction: column;
   justify-content: center;
@@ -572,9 +572,9 @@
 }
 
 .tile-wall--right {
-  right: 1px;
-  top: 14%;
-  bottom: 14%;
+  right: -14px;
+  top: 8%;
+  bottom: 8%;
   width: 15px;
   flex-direction: column;
   justify-content: center;
