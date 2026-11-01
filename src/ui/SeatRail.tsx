@@ -23,6 +23,8 @@ export function SeatRail({
   canInteract,
   actionTargetIds,
 }: Props) {
+  const isSelf = side === 'bottom';
+
   const handTiles =
     showHand && drawnTile
       ? player.hand.filter((t) => t.id !== drawnTile.id)
@@ -42,6 +44,7 @@ export function SeatRail({
                 <TileView
                   key={t.id}
                   tile={t}
+                  opp={!isSelf}
                   selected={selectedId === t.id}
                   lift={selectedId === t.id || isTarget}
                   actionTarget={isTarget}
@@ -58,6 +61,7 @@ export function SeatRail({
                     <TileView
                       key={drawnTile.id}
                       tile={drawnTile}
+                      opp={!isSelf}
                       selected={selectedId === drawnTile.id}
                       lift={selectedId === drawnTile.id || isDrawnTarget}
                       actionTarget={isDrawnTarget}
