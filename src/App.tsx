@@ -100,13 +100,11 @@ export default function App() {
     // 2. 出牌聲 (lastDiscard 變更)
     if (state.lastDiscard && state.lastDiscard.id !== prev.lastDiscard?.id) {
       soundManager.playTileDiscard();
-      return;
     }
 
     // 3. 摸牌聲 (drawnTile 摸入)
-    if (state.drawnTile && state.drawnTile.id !== prev.drawnTile?.id) {
+    else if (state.drawnTile && state.drawnTile.id !== prev.drawnTile?.id) {
       soundManager.playTileDraw();
-      return;
     }
 
     // 4. 副露聲 (吃碰槓數量變更)
@@ -127,7 +125,6 @@ export default function App() {
       } else {
         soundManager.playPong();
       }
-      return;
     }
 
     // 5. 補花聲
@@ -135,7 +132,22 @@ export default function App() {
     const currFlowerCount = state.players.reduce((sum: number, p: any) => sum + p.flowers.length, 0);
     if (currFlowerCount > prevFlowerCount) {
       soundManager.playFlower();
-      return;
+    }
+
+    // 6. 等候玩家操作提示音 (輪到自己出牌，或出現吃碰槓糊按鈕)
+    const isWaitingUserAction = (s: typeof state, seat: number): boolean => {
+      if (!s || s.phase === 'ended') return false;
+      if (s.phase === 'claim' && (s.claimOptions[seat]?.length ?? 0) > 0) return true;
+      if (s.phase === 'discard' && s.currentPlayer === seat) return true;
+      return false;
+    };
+
+    const wasWaiting = isWaitingUserAction(prev, activeSeat);
+    const isWaiting = isWaitingUserAction(state, activeSeat);
+    if (isWaiting && !wasWaiting) {
+      setTimeout(() => {
+        soundManager.playActionPrompt();
+      }, 160);
     }
   }, [state]);
 

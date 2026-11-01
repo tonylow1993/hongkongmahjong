@@ -493,43 +493,43 @@
 }
 
 .river--top {
-  top: 18px;
+  top: 20px;
   left: 8%;
   right: 8%;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  max-height: 33%;
+  max-height: 30%;
 }
 
 .river--bottom {
-  bottom: 18px;
+  bottom: 20px;
   left: 8%;
   right: 8%;
   flex-direction: column-reverse;
   align-items: center;
   justify-content: flex-end;
-  max-height: 33%;
+  max-height: 30%;
 }
 
 .river--left {
-  left: 18px;
+  left: 20px;
   top: 10%;
   bottom: 10%;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  max-width: 25%;
+  max-width: 24%;
 }
 
 .river--right {
-  right: 18px;
+  right: 20px;
   top: 10%;
   bottom: 10%;
   flex-direction: row-reverse;
   align-items: center;
   justify-content: flex-end;
-  max-width: 25%;
+  max-width: 24%;
 }
 
 /* —— 牌疊 / 牌山 (Tile Wall) —— */
@@ -680,18 +680,21 @@
 }
 
 .river--dense .mj-tile--river {
-  --tile-w: 32px;
-  --tile-h: 42px;
+  --tile-w: 24px;
+  --tile-h: 33px;
+  padding: 1.5px;
 }
 
 .river--denser .mj-tile--river {
-  --tile-w: 27px;
-  --tile-h: 36px;
+  --tile-w: 21px;
+  --tile-h: 29px;
+  padding: 1px;
 }
 
 .river--compact .mj-tile--river {
-  --tile-w: 22px;
-  --tile-h: 30px;
+  --tile-w: 18px;
+  --tile-h: 25px;
+  padding: 1px;
 }
 
 .river--dense .river__row,
@@ -804,8 +807,10 @@
 }
 
 .app--ref .mj-tile--river {
-  --tile-w: 38px;
-  --tile-h: 50px;
+  --tile-w: 28px;
+  --tile-h: 38px;
+  padding: 2px;
+  border-radius: 3px;
 }
 
 .app--ref .mj-tile--tiny {
@@ -873,8 +878,9 @@
   }
 
   .app--ref .mj-tile--river {
-    --tile-w: 30px;
-    --tile-h: 40px;
+    --tile-w: 22px;
+    --tile-h: 30px;
+    padding: 1.5px;
   }
 
   .app--ref .mj-tile--meld {

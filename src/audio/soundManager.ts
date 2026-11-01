@@ -345,6 +345,37 @@ class SoundManager {
     }
   }
 
+  /**
+   * 11. 等候玩家操作提示音 (Action Prompt)
+   * 輪到自己出牌或出現吃碰槓糊按鈕時，播放清新清脆的兩音提示音 (A5 -> E6)
+   */
+  public playActionPrompt() {
+    this.unlock();
+    const env = this.getDestination();
+    if (!env) return;
+    const { ctx, dest } = env;
+    const t = ctx.currentTime;
+    const tones = [880, 1318.5]; // A5 -> E6
+
+    tones.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const st = t + idx * 0.085;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, st);
+
+      gain.gain.setValueAtTime(0.5, st);
+      gain.gain.exponentialRampToValueAtTime(0.001, st + 0.28);
+
+      osc.connect(gain);
+      gain.connect(dest);
+
+      osc.start(st);
+      osc.stop(st + 0.3);
+    });
+  }
+
   public playTileClick() {
     this.playTileSelect();
   }
