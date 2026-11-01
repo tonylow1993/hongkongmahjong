@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { GameState } from '../game/types';
 import { formatLa } from '../game/settlement';
 import { sortTiles, tileLabel } from '../game/tiles';
 import { TileView } from './TileView';
+import { soundManager } from '../audio/soundManager';
 
 interface Props {
   state: GameState;
@@ -12,6 +13,16 @@ interface Props {
 
 export function WinModal({ state, onNextRound, onResetTable }: Props) {
   const [minimized, setMinimized] = useState(false);
+
+  useEffect(() => {
+    if (state.phase === 'ended' && state.winInfo) {
+      if (state.winInfo.isSelfDraw) {
+        soundManager.playZimo();
+      } else {
+        soundManager.playWin();
+      }
+    }
+  }, [state.phase, state.winInfo]);
 
   if (state.phase !== 'ended') {
     return null;
