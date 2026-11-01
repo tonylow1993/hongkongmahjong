@@ -171,6 +171,7 @@ export default function App() {
 
   const handleDiscard = () => {
     if (!selectedId) return;
+    soundManager.playTileDiscard();
     if (isOnline) {
       onlineClient.discard(selectedId);
     } else {
@@ -180,6 +181,12 @@ export default function App() {
   };
 
   const handleClaim = (opt: any) => {
+    if (opt.kind === 'pong') soundManager.playPong();
+    else if (opt.kind === 'chow') soundManager.playChow();
+    else if (opt.kind === 'kong') soundManager.playKong();
+    else if (opt.kind === 'win') soundManager.playWin();
+    else soundManager.playTileClick();
+
     if (isOnline) {
       onlineClient.claim(opt);
     } else {
@@ -189,6 +196,10 @@ export default function App() {
   };
 
   const handleSelfAction = (opt: any) => {
+    if (opt.kind === 'win') soundManager.playZimo();
+    else if (opt.kind === 'kong') soundManager.playKong();
+    else soundManager.playTileClick();
+
     if (isOnline) {
       onlineClient.selfAction(opt);
     } else {
@@ -198,6 +209,7 @@ export default function App() {
   };
 
   const handleNextRound = () => {
+    soundManager.playDeal();
     if (isOnline) {
       onlineClient.nextRound();
     } else {
