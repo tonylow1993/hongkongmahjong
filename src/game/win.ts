@@ -1,5 +1,5 @@
 import type { Meld, Tile } from './types';
-import { countByKey, isHonor, isSuited, sameTile, tileKey } from './tiles';
+import { countByKey, isHonor, isSuited, sameTile, sortTiles, tileKey } from './tiles';
 
 export interface WinShape {
   pair: Tile[];
@@ -10,7 +10,7 @@ export interface WinShape {
 export function canWinStandard(hand: Tile[], melds: Meld[], winningTile: Tile): WinShape | null {
   const openMelds = melds.length;
   const needed = 4 - openMelds;
-  const tiles = [...hand, winningTile];
+  const tiles = sortTiles([...hand, winningTile]);
   if (tiles.length !== needed * 3 + 2) return null;
 
   const shapes = findShapes(tiles, needed);
@@ -57,8 +57,9 @@ export function isThirteenOrphans(tiles: Tile[], melds: Meld[]): boolean {
 }
 
 function findShapes(tiles: Tile[], neededMelds: number): WinShape[] {
+  const sorted = sortTiles(tiles);
   const results: WinShape[] = [];
-  const counts = toCountMap(tiles);
+  const counts = toCountMap(sorted);
 
   for (const key of [...counts.keys()]) {
     if ((counts.get(key) ?? 0) < 2) continue;
