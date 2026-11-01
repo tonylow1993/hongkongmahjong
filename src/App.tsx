@@ -57,9 +57,6 @@ export default function App() {
       setRoom(data.room);
       setYourSeat(data.yourSeat);
       setIsHost(data.isHost);
-      if (data.room.gameState) {
-        setOnlineGameState(data.room.gameState);
-      }
     });
 
     const unsubGame = onlineClient.onGameState((state) => {

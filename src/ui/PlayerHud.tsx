@@ -6,9 +6,10 @@ interface Props {
   side: 'top' | 'bottom' | 'left' | 'right';
   isDealer: boolean;
   isCurrent: boolean;
+  isSelf?: boolean;
 }
 
-export function PlayerHud({ player, side, isDealer, isCurrent }: Props) {
+export function PlayerHud({ player, side, isDealer, isCurrent, isSelf = false }: Props) {
   return (
     <div
       className={[
@@ -21,7 +22,7 @@ export function PlayerHud({ player, side, isDealer, isCurrent }: Props) {
         .join(' ')}
     >
       <div className="phud__avatar" aria-hidden>
-        {player.isHuman ? '你' : player.name.charAt(0)}
+        {isSelf ? '你' : player.name.charAt(0)}
       </div>
       <div className="phud__info">
         <span className="phud__name">

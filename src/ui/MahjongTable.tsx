@@ -43,6 +43,7 @@ export function MahjongTable({
           side="top"
           isDealer={state.dealer === topSeat}
           isCurrent={state.currentPlayer === topSeat}
+          isSelf={topSeat === mySeat}
         />
         <SeatRail player={state.players[topSeat]} side="top" showHand={isEnded} />
       </div>
@@ -54,6 +55,7 @@ export function MahjongTable({
             side="left"
             isDealer={state.dealer === leftSeat}
             isCurrent={state.currentPlayer === leftSeat}
+            isSelf={leftSeat === mySeat}
           />
           <SeatRail player={state.players[leftSeat]} side="left" showHand={isEnded} />
         </div>
@@ -66,6 +68,7 @@ export function MahjongTable({
             side="right"
             isDealer={state.dealer === rightSeat}
             isCurrent={state.currentPlayer === rightSeat}
+            isSelf={rightSeat === mySeat}
           />
           <SeatRail player={state.players[rightSeat]} side="right" showHand={isEnded} />
         </div>
@@ -77,6 +80,7 @@ export function MahjongTable({
           side="bottom"
           isDealer={state.dealer === bottomSeat}
           isCurrent={state.currentPlayer === bottomSeat}
+          isSelf={bottomSeat === mySeat}
         />
         <SeatRail
           player={state.players[bottomSeat]}
