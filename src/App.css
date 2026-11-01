@@ -660,7 +660,74 @@
 .action-bar__btns {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
+}
+
+/* 動作按鈕圖示與排版 */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+}
+
+.action-btn__icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.action-btn__label {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.action-btn__fan {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+/* 吃碰槓候選牌展示區：打橫水平排列 */
+.action-btn__tiles {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  padding: 2px 4px;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 4px;
+}
+
+/* 吃碰槓的迷你牌打橫顯示 */
+.action-tile-mini {
+  display: inline-flex;
+  width: 24px;
+  height: 19px;
+  background: #fbfbf9;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.action-tile-mini--horiz {
+  width: 25px;
+  height: 18px;
+}
+
+.action-tile-mini__inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-tile-mini .mj-face {
+  width: 100%;
+  height: 100%;
 }
 
 /* —— Buttons —— */

@@ -107,7 +107,8 @@
 .exposed .meld {
   display: flex;
   flex-direction: row;
-  gap: 0;
+  align-items: flex-end;
+  gap: 1px;
   flex-shrink: 0;
 }
 
