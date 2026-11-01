@@ -698,11 +698,11 @@
   border-radius: 4px;
 }
 
-/* 吃碰槓的迷你牌打橫顯示 */
+/* 吃碰槓按鈕內的迷你牌 */
 .action-tile-mini {
   display: inline-flex;
-  width: 24px;
-  height: 19px;
+  width: 17px;
+  height: 23px;
   background: #fbfbf9;
   border-radius: 2px;
   border: 1px solid rgba(0, 0, 0, 0.35);
@@ -710,11 +710,6 @@
   overflow: hidden;
   position: relative;
   box-sizing: border-box;
-}
-
-.action-tile-mini--horiz {
-  width: 25px;
-  height: 18px;
 }
 
 .action-tile-mini__inner {

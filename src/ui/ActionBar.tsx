@@ -24,11 +24,11 @@ const ACTION_CONFIG: Record<string, { label: string; icon: string }> = {
 };
 
 /**
- * 吃碰槓動作候選牌：打橫顯示的迷你牌面
+ * 吃碰槓動作候選牌：正向顯示的迷你牌面
  */
 function ActionTileMini({ tile }: { tile: Tile }) {
   return (
-    <span className="action-tile-mini action-tile-mini--horiz" title={tileLabel(tile)}>
+    <span className="action-tile-mini" title={tileLabel(tile)}>
       <span className="action-tile-mini__inner">
         <TileFace suit={tile.suit} value={tile.value} />
       </span>
