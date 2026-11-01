@@ -25,12 +25,15 @@ interface Props {
   disabled?: boolean;
   onClick?: () => void;
   lift?: boolean;
+  /** 當前吃碰槓動作相關候選牌（高亮但不用閃） */
+  actionTarget?: boolean;
 }
 
 export function TileView({
   tile,
   selected,
   highlight,
+  actionTarget,
   faceDown,
   small,
   tiny,
@@ -78,6 +81,7 @@ export function TileView({
         `mj-tile--${orient}`,
         selected ? 'mj-tile--selected' : '',
         highlight ? 'mj-tile--highlight' : '',
+        actionTarget ? 'mj-tile--action-target' : '',
         lift ? 'mj-tile--lift' : '',
         disabled ? 'mj-tile--disabled' : '',
         onClick ? 'mj-tile--clickable' : '',

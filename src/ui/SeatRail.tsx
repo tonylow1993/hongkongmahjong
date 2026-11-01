@@ -10,6 +10,7 @@ interface Props {
   selectedId?: string | null;
   onSelectTile?: (id: string) => void;
   canInteract?: boolean;
+  actionTargetIds?: Set<string>;
 }
 
 export function SeatRail({
@@ -20,6 +21,7 @@ export function SeatRail({
   selectedId,
   onSelectTile,
   canInteract,
+  actionTargetIds,
 }: Props) {
   const handTiles =
     showHand && drawnTile
@@ -34,25 +36,35 @@ export function SeatRail({
       <div className={`seat__hand seat__hand--${side}`}>
         {showHand ? (
           <>
-            {handTiles.map((t) => (
-              <TileView
-                key={t.id}
-                tile={t}
-                selected={selectedId === t.id}
-                lift={selectedId === t.id}
-                onClick={canInteract ? () => onSelectTile?.(t.id) : undefined}
-              />
-            ))}
+            {handTiles.map((t) => {
+              const isTarget = actionTargetIds?.has(t.id) ?? false;
+              return (
+                <TileView
+                  key={t.id}
+                  tile={t}
+                  selected={selectedId === t.id}
+                  lift={selectedId === t.id || isTarget}
+                  actionTarget={isTarget}
+                  onClick={canInteract ? () => onSelectTile?.(t.id) : undefined}
+                />
+              );
+            })}
             {drawnInHand && drawnTile && (
               <>
                 <div className="seat__drawn-gap" aria-hidden />
-                <TileView
-                  key={drawnTile.id}
-                  tile={drawnTile}
-                  selected={selectedId === drawnTile.id}
-                  lift={selectedId === drawnTile.id}
-                  onClick={canInteract ? () => onSelectTile?.(drawnTile.id) : undefined}
-                />
+                {(() => {
+                  const isDrawnTarget = actionTargetIds?.has(drawnTile.id) ?? false;
+                  return (
+                    <TileView
+                      key={drawnTile.id}
+                      tile={drawnTile}
+                      selected={selectedId === drawnTile.id}
+                      lift={selectedId === drawnTile.id || isDrawnTarget}
+                      actionTarget={isDrawnTarget}
+                      onClick={canInteract ? () => onSelectTile?.(drawnTile.id) : undefined}
+                    />
+                  );
+                })()}
               </>
             )}
           </>

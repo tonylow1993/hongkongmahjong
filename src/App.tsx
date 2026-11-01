@@ -9,9 +9,52 @@ import { onlineClient } from './online/onlineClient';
 import { LobbyLanding } from './online/LobbyLanding';
 import { RoomLockedPage } from './online/RoomLockedPage';
 import { soundManager } from './audio/soundManager';
+import type { ClaimOption, Tile } from './game/types';
+import { sameTile } from './game/tiles';
 import type { RoomState } from '../server/types';
 import './App.css';
 import './ref-layout.css';
+
+/**
+ * 計算吃碰槓等動作時，手牌及桌面上相關候選牌的 ID 集合
+ */
+function getRelevantTileIds(
+  opt: ClaimOption | null,
+  hand: Tile[],
+  discardedTile?: Tile | null,
+): Set<string> {
+  const ids = new Set<string>();
+  if (!opt || !opt.tiles || opt.tiles.length === 0) return ids;
+
+  // 1. 如果桌上剛打出的牌是此操作的一部分（吃、碰、明槓、食糊），包含桌上這張牌
+  if (discardedTile && opt.tiles.some((t) => t.id === discardedTile.id || sameTile(t, discardedTile))) {
+    ids.add(discardedTile.id);
+  }
+
+  // 2. 扣除桌上這張牌，計算需要從手牌中使用的牌組
+  const neededFromHand = [...opt.tiles];
+  if (discardedTile) {
+    const discardIdx = neededFromHand.findIndex(
+      (t) => t.id === discardedTile.id || sameTile(t, discardedTile),
+    );
+    if (discardIdx >= 0) {
+      neededFromHand.splice(discardIdx, 1);
+    }
+  }
+
+  // 3. 在手牌中匹配出這些牌（按花色與點數匹配）
+  for (const h of hand) {
+    const matchIdx = neededFromHand.findIndex(
+      (t) => t.id === h.id || sameTile(t, h),
+    );
+    if (matchIdx >= 0) {
+      ids.add(h.id);
+      neededFromHand.splice(matchIdx, 1);
+    }
+  }
+
+  return ids;
+}
 
 export default function App() {
   const localState = useGameStore((s) => s.state);
@@ -180,6 +223,21 @@ export default function App() {
     state.phase === 'claim' && state.claimOptions[activeSeat]
       ? state.claimOptions[activeSeat]
       : null;
+
+  // 懸停吃碰槓動作按鈕時，高亮手牌及桌面上的相關牌
+  const [hoveredOption, setHoveredOption] = useState<ClaimOption | null>(null);
+
+  const actionTargetIds = useMemo(() => {
+    if (!hoveredOption || !state) return new Set<string>();
+    const myPlayer = state.players[activeSeat];
+    const hand = myPlayer ? myPlayer.hand : [];
+    const discarded = state.lastDiscard;
+    return getRelevantTileIds(hoveredOption, hand, discarded);
+  }, [hoveredOption, state, activeSeat]);
+
+  useEffect(() => {
+    setHoveredOption(null);
+  }, [state?.phase, state?.turn, state?.currentPlayer]);
 
   const handleDiscard = () => {
     if (!selectedId) return;
@@ -362,6 +420,7 @@ export default function App() {
           }}
           canInteract={canInteract}
           mySeat={activeSeat}
+          actionTargetIds={actionTargetIds}
         />
       </main>
 
@@ -380,6 +439,7 @@ export default function App() {
           handleClaim(opt);
           setSelectedId(null);
         }}
+        onHoverOption={setHoveredOption}
         message={state.message}
         aiThinking={aiThinking}
       />

@@ -829,6 +829,24 @@
   position: relative;
 }
 
+/* 吃碰槓等候選牌高亮（hover動作按鈕時）：外加高亮外框與立體光暈，但嚴格不用閃爍 */
+.app--ref .mj-tile--action-target,
+.mj-tile--action-target {
+  outline: 3px solid #00e5ff !important;
+  outline-offset: 1.5px !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.85), 0 4px 10px rgba(0, 0, 0, 0.45) !important;
+  transform: translateY(-8px) !important;
+  z-index: 10 !important;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, outline 0.15s ease;
+  animation: none !important; /* 嚴格不用閃 */
+}
+
+/* 如果河牌也是吃碰槓目標（例如被吃的牌），稍微放大凸顯且不位移行高 */
+.app--ref .mj-tile--river.mj-tile--action-target {
+  transform: scale(1.12) !important;
+}
+
 .app--ref .mj-tile--highlight::before {
   content: '';
   position: absolute;

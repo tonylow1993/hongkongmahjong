@@ -10,6 +10,7 @@ interface Props {
   onSelectTile: (id: string) => void;
   canInteract: boolean;
   mySeat?: number; // 預設為 0
+  actionTargetIds?: Set<string>;
 }
 
 export function MahjongTable({
@@ -18,6 +19,7 @@ export function MahjongTable({
   onSelectTile,
   canInteract,
   mySeat = 0,
+  actionTargetIds,
 }: Props) {
   const isEnded = state.phase === 'ended';
   const humanTurn = state.phase === 'discard' && state.currentPlayer === mySeat;
@@ -60,7 +62,7 @@ export function MahjongTable({
           <SeatRail player={state.players[leftSeat]} side="left" showHand={isEnded} />
         </div>
 
-        <TableCenter state={state} mySeat={mySeat} />
+        <TableCenter state={state} mySeat={mySeat} actionTargetIds={actionTargetIds} />
 
         <div className="mj-table__wing mj-table__wing--right">
           <PlayerHud
@@ -90,6 +92,7 @@ export function MahjongTable({
           selectedId={selectedId}
           onSelectTile={onSelectTile}
           canInteract={canInteract}
+          actionTargetIds={actionTargetIds}
         />
       </div>
     </div>

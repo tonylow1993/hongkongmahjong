@@ -6,6 +6,7 @@ import { TileWall } from './TileWall';
 interface Props {
   state: GameState;
   mySeat?: number;
+  actionTargetIds?: Set<string>;
 }
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -33,11 +34,13 @@ function River({
   side,
   active,
   lastId,
+  actionTargetIds,
 }: {
   tiles: Tile[];
   side: 'top' | 'bottom' | 'left' | 'right';
   active: boolean;
   lastId: string | null;
+  actionTargetIds?: Set<string>;
 }) {
   const { rowSize, density } = riverPlan(tiles.length, side);
   const rows = chunk(tiles, rowSize);
@@ -46,14 +49,18 @@ function River({
     <div className={`river river--${side} ${density} ${active ? 'river--active' : ''}`}>
       {rows.map((row, ri) => (
         <div key={ri} className="river__row">
-          {row.map((t) => (
-            <TileView
-              key={t.id}
-              tile={t}
-              river
-              highlight={t.id === lastId}
-            />
-          ))}
+          {row.map((t) => {
+            const isTarget = actionTargetIds?.has(t.id) ?? false;
+            return (
+              <TileView
+                key={t.id}
+                tile={t}
+                river
+                highlight={t.id === lastId && !isTarget}
+                actionTarget={isTarget}
+              />
+            );
+          })}
         </div>
       ))}
     </div>
@@ -61,7 +68,7 @@ function River({
 }
 
 /** 參考手遊：中央灰框 + 四邊河牌（依據 mySeat 旋轉視角） */
-export function TableCenter({ state, mySeat = 0 }: Props) {
+export function TableCenter({ state, mySeat = 0, actionTargetIds }: Props) {
   const wind = WIND_LABELS[state.prevailingWind];
   const bottomSeat = mySeat;
   const rightSeat = (mySeat + 1) % 4;
@@ -94,24 +101,28 @@ export function TableCenter({ state, mySeat = 0 }: Props) {
         side="top"
         active={state.currentPlayer === topSeat}
         lastId={state.lastDiscarder === topSeat ? lastId : null}
+        actionTargetIds={actionTargetIds}
       />
       <River
         tiles={pLeft.discards}
         side="left"
         active={state.currentPlayer === leftSeat}
         lastId={state.lastDiscarder === leftSeat ? lastId : null}
+        actionTargetIds={actionTargetIds}
       />
       <River
         tiles={pRight.discards}
         side="right"
         active={state.currentPlayer === rightSeat}
         lastId={state.lastDiscarder === rightSeat ? lastId : null}
+        actionTargetIds={actionTargetIds}
       />
       <River
         tiles={pBottom.discards}
         side="bottom"
         active={state.currentPlayer === bottomSeat}
         lastId={state.lastDiscarder === bottomSeat ? lastId : null}
+        actionTargetIds={actionTargetIds}
       />
 
       <div className="console">

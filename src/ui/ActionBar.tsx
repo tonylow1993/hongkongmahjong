@@ -11,6 +11,7 @@ interface Props {
   onDiscard: () => void;
   onSelfAction: (opt: ClaimOption) => void;
   onClaim: (opt: ClaimOption) => void;
+  onHoverOption?: (opt: ClaimOption | null) => void;
   message: string;
   aiThinking: boolean;
 }
@@ -45,6 +46,7 @@ export function ActionBar({
   onDiscard,
   onSelfAction,
   onClaim,
+  onHoverOption,
   message,
   aiThinking,
 }: Props) {
@@ -70,6 +72,8 @@ export function ActionBar({
                   type="button"
                   className={`btn btn--accent ${isWin ? 'btn--win' : ''} action-btn`}
                   onClick={() => onSelfAction(opt)}
+                  onMouseEnter={() => onHoverOption?.(opt)}
+                  onMouseLeave={() => onHoverOption?.(null)}
                 >
                   <span className="action-btn__icon">{icon}</span>
                   <span className="action-btn__label">{label}</span>
@@ -113,6 +117,8 @@ export function ActionBar({
                     isWin ? 'btn--win' : isPass ? 'btn--ghost' : 'btn--accent'
                   } action-btn`}
                   onClick={() => onClaim(opt)}
+                  onMouseEnter={() => onHoverOption?.(opt)}
+                  onMouseLeave={() => onHoverOption?.(null)}
                   title={opt.tiles?.map(tileLabel).join(' ')}
                 >
                   <span className="action-btn__icon">{cfg.icon}</span>
